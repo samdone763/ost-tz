@@ -706,7 +706,7 @@
   }
 
   function addToWishlist(id) { OST.toast.info('Wishlist — Inakuja hivi karibuni!'); }
-  function toggleUserDropdown() { OST.auth.logout(); }
+  function toggleUserDropdown() { if(confirm('Unataka kutoka?')) OST.auth.logout(); }
 </script>
 </body>
 </html>
