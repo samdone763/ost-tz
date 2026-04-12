@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Stores TZ — Biashara za Tanzania</title>
+  <meta name="description" content="Gundua biashara bora za Tanzania. Nunua bidhaa za mitaa, usalama wa hali ya juu, delivery kote Tanzania.">
+  <meta property="og:title" content="Online Stores TZ">
+  <meta property="og:description" content="Duka kubwa la Tanzania — bidhaa za aina zote">
+  <meta property="og:image" content="https://samdone763.github.io/onlinestores-tz/assets/icons/og-image.png">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    /* ── Hero ── */
+    .hero {
+      min-height: 480px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(232,98,26,0.15) 0%, transparent 60%);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 600px; }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(232,98,26,0.15);
+      border: 1px solid rgba(232,98,26,0.3);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-5);
+    }
+    .hero h1 { color: white; margin-bottom: var(--space-4); }
+    .hero p { color: rgba(255,255,255,0.65); font-size: 1.1rem; margin-bottom: var(--space-8); }
+    .hero-search {
+      display: flex;
+      background: white;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      max-width: 480px;
+    }
+    .hero-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: var(--space-4) var(--space-5);
+      font-size: 0.95rem;
+      color: var(--gray-800);
+    }
+    .hero-search button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: var(--space-4) var(--space-6);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .hero-search button:hover { background: var(--accent-hover); }
+    .hero-stats {
+      display: flex;
+      gap: var(--space-8);
+      margin-top: var(--space-8);
+    }
+    .hero-stat { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+    .hero-stat strong { display: block; color: white; font-size: 1.5rem; font-family: var(--font-display); }
+
+    /* ── Categories ── */
+    .categories-strip {
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .categories-strip::-webkit-scrollbar { display: none; }
+    .categories-inner {
+      display: flex;
+      gap: var(--space-2);
+      padding: var(--space-4) 0;
+      width: max-content;
+      min-width: 100%;
+    }
+    .category-chip {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--gray-200);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: white;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .category-chip:hover, .category-chip.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--gray-50);
+    }
+    .category-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* ── Section Headers ── */
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+    }
+    .section-header h2 { margin-bottom: var(--space-1); }
+    .section-header p { font-size: 0.9rem; }
+
+    /* ── Filters Bar ── */
+    .filters-bar {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: var(--space-6);
+    }
+    .filter-select {
+      padding: var(--space-2) var(--space-4);
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      color: var(--gray-700);
+      background: white;
+      cursor: pointer;
+      outline: none;
+      transition: var(--transition);
+    }
+    .filter-select:focus { border-color: var(--primary); }
+    .results-count { font-size: 0.85rem; color: var(--gray-400); margin-left: auto; }
+
+    /* ── Promo Banner ── */
+    .promo-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, #2D2D2D 100%);
+      border-radius: var(--radius-xl);
+      padding: var(--space-10) var(--space-8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-6);
+      overflow: hidden;
+      position: relative;
+      margin: var(--space-12) 0;
+    }
+    .promo-banner::before {
+      content: '';
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 300px;
+      height: 300px;
+      background: rgba(232,98,26,0.12);
+      border-radius: 50%;
+    }
+    .promo-banner h2 { color: white; margin-bottom: var(--space-2); }
+    .promo-banner p { color: rgba(255,255,255,0.65); }
+  </style>
+</head>
+<body>
+
+<!-- ─── Navigation ─────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="nav-logo">Online<span>Stores</span> TZ</a>
+
+    <div class="nav-search search-wrapper">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="navSearchInput" placeholder="Tafuta biashara au bidhaa...">
+      <div id="navAutocomplete" class="autocomplete-dropdown hidden"></div>
+    </div>
+
+    <div class="nav-actions">
+      <a href="index.html" class="btn btn-ghost btn-sm" style="position:relative">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        <span id="cartBadge" class="badge badge-accent" style="position:absolute;top:-4px;right:-4px;padding:2px 6px;font-size:0.7rem;display:none">0</span>
+      </a>
+
+      <button id="loginBtn" class="btn btn-primary btn-sm" onclick="showModal('authModal')">Ingia</button>
+
+      <div id="userMenu" style="display:none;align-items:center;gap:8px;cursor:pointer" onclick="toggleUserDropdown()">
+        <img id="userAvatar" src="assets/icons/user.svg" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--gray-200)">
+        <span id="userName" style="font-weight:500;font-size:0.9rem"></span>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── Hero ──────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span>🇹🇿</span> Biashara za Tanzania
+      </div>
+      <h1>Nunua na Uza<br>Tanzania Nzima</h1>
+      <p>Biashara za mikoa 26 — bidhaa bora, malipo salama, delivery haraka.</p>
+
+      <div class="hero-search search-wrapper">
+        <input type="text" id="heroSearch" placeholder="Unatafuta nini leo?">
+        <button onclick="doHeroSearch()">Tafuta</button>
+        <div id="heroAutocomplete" class="autocomplete-dropdown hidden"></div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat"><strong id="totalStores">—</strong> Biashara</div>
+        <div class="hero-stat"><strong id="totalProducts">—</strong> Bidhaa</div>
+        <div class="hero-stat"><strong>26</strong> Mikoa</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Categories ────────────────────────────────────── -->
+<div class="categories-strip">
+  <div class="container">
+    <div class="categories-inner" id="categoriesStrip">
+      <button class="category-chip active" data-category="">🏪 Zote</button>
+      <button class="category-chip" data-category="fashion">👗 Nguo & Mitindo</button>
+      <button class="category-chip" data-category="electronics">📱 Elektroniki</button>
+      <button class="category-chip" data-category="food">🍽️ Chakula</button>
+      <button class="category-chip" data-category="beauty">💄 Urembo</button>
+      <button class="category-chip" data-category="health">💊 Afya</button>
+      <button class="category-chip" data-category="home">🏠 Nyumbani</button>
+      <button class="category-chip" data-category="sports">⚽ Michezo</button>
+      <button class="category-chip" data-category="agriculture">🌾 Kilimo</button>
+      <button class="category-chip" data-category="art">🎨 Sanaa</button>
+      <button class="category-chip" data-category="services">🔧 Huduma</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Main Content ──────────────────────────────────── -->
+<main>
+
+  <!-- Featured Stores -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2>Biashara Zilizoangaziwa</h2>
+          <p>Biashara bora zilizochaguliwa kwa ubora</p>
+        </div>
+        <a href="#allStores" class="btn btn-outline btn-sm">Ona Zote</a>
+      </div>
+      <div class="stores-grid" id="featuredStores"></div>
+    </div>
+  </section>
+
+  <!-- Promo Banner -->
+  <div class="container">
+    <div class="promo-banner">
+      <div style="position:relative;z-index:1">
+        <h2>Una Biashara?</h2>
+        <p>Anza kuuza leo. Bure kabisa kuanza. Biashara yako kwa Tanzania nzima.</p>
+        <button class="btn btn-accent" style="margin-top:var(--space-5)" onclick="showModal('authModal')">Anza Sasa — Bure</button>
+      </div>
+      <div style="position:relative;z-index:1;text-align:right">
+        <div style="font-family:var(--font-display);font-size:3rem;color:rgba(255,255,255,0.1)">Shopify ya Tanzania</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Stores / Products -->
+  <section class="section" id="allStores">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 id="sectionTitle">Biashara Zote</h2>
+          <p id="sectionSubtitle">Gundua biashara kutoka mikoa yote ya Tanzania</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-outline btn-sm" id="viewStoresBtn" onclick="setView('stores')">Biashara</button>
+          <button class="btn btn-ghost btn-sm" id="viewProductsBtn" onclick="setView('products')">Bidhaa</button>
+        </div>
+      </div>
+
+      <div class="filters-bar">
+        <select class="filter-select" id="regionFilter" onchange="applyFilters()">
+          <option value="">Mkoa Wote</option>
+          <option>Arusha</option><option>Dar es Salaam</option><option>Dodoma</option>
+          <option>Mwanza</option><option>Mbeya</option><option>Morogoro</option>
+          <option>Tanga</option><option>Kilimanjaro</option><option>Kagera</option>
+          <option>Iringa</option><option>Lindi</option><option>Mtwara</option>
+          <option>Ruvuma</option><option>Singida</option><option>Tabora</option>
+          <option>Kigoma</option><option>Shinyanga</option><option>Geita</option>
+          <option>Simiyu</option><option>Mara</option><option>Manyara</option>
+          <option>Njombe</option><option>Songwe</option><option>Katavi</option>
+          <option>Rukwa</option><option>Pwani</option>
+        </select>
+
+        <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+          <option value="-createdAt">Mpya Kwanza</option>
+          <option value="popular">Maarufu</option>
+          <option value="price-asc">Bei — Chini</option>
+          <option value="price-desc">Bei — Juu</option>
+        </select>
+
+        <input type="number" class="filter-select" id="maxPriceFilter" placeholder="Bei ya juu (TZS)" style="max-width:160px" onchange="applyFilters()">
+
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+
+      <div id="mainGrid" class="stores-grid"></div>
+
+      <div class="text-center" style="margin-top:var(--space-10)">
+        <button id="loadMoreBtn" class="btn btn-outline" onclick="loadMore()" style="display:none">Pakia Zaidi</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ─── Footer ────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Online<span>Stores</span> TZ</div>
+        <p style="font-size:0.875rem;line-height:1.7">Platform ya biashara ya kidijitali kwa Tanzania nzima. Biashara rahisi, salama, na ya haraka.</p>
+      </div>
+      <div>
+        <h4>Biashara</h4>
+        <ul>
+          <li><a href="#">Anza Biashara</a></li>
+          <li><a href="#">Jinsi Inavyofanya Kazi</a></li>
+          <li><a href="#">Bei na Mipango</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Msaada</h4>
+        <ul>
+          <li><a href="#">Maswali Yanayoulizwa</a></li>
+          <li><a href="#">Wasiliana Nasi</a></li>
+          <li><a href="#">Sera ya Faragha</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Malipo</h4>
+        <ul>
+          <li><a href="#">M-Pesa</a></li>
+          <li><a href="#">Tigo Pesa</a></li>
+          <li><a href="#">Airtel Money</a></li>
+          <li><a href="#">Halopesa</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Online Stores TZ. Haki zote zimehifadhiwa.</span>
+      <span>Imetengenezwa Tanzania 🇹🇿</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── Auth Modal ─────────────────────────────────────── -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="authTitle">Ingia Akaunti</h3>
+      <button onclick="closeModal('authModal')" class="btn btn-ghost btn-sm">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Login Form -->
+      <div id="loginForm">
+        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="loginEmail" placeholder="jina@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Neno la Siri</label>
+            <input type="password" class="form-input" id="loginPassword" placeholder="••••••••">
+          </div>
+          <button class="btn btn-primary btn-full" onclick="doLogin()" id="loginSubmitBtn">Ingia</button>
+          <div class="divider-text">au</div>
+          <button class="btn btn-outline btn-full" onclick="switchToRegister()">Unda Akaunti Mpya</button>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+          <div class="form-group">
+            <label class="form-label">Jina Kamili</label>
+            <input type="text" class="form-input" id="regName" placeholder="Jina lako kamili">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="regEmail" placeholder="jina@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Namba ya Simu</label>
+            <input type="tel" class="form-input" id="regPhone" placeholder="0712345678">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Neno la Siri</label>
+            <input type="password" class="form-input" id="regPassword" placeholder="Herufi 8+">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Aina ya Akaunti</label>
+            <select class="form-select" id="regRole">
+              <option value="buyer">Mnunuzi — Ninataka kununua</option>
+              <option value="merchant">Muuzaji — Nina biashara</option>
+            </select>
+          </div>
+          <button class="btn btn-accent btn-full" onclick="doRegister()" id="regSubmitBtn">Unda Akaunti</button>
+          <button class="btn btn-ghost btn-full" onclick="switchToLogin()">Rudi Ingia</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  // ─── State ──────────────────────────────────────────
+  let currentView = 'stores';
+  let currentCategory = '';
+  let currentPage = 1;
+  let totalPages = 1;
+
+  // ─── Init ────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', async () => {
+    OST.search.init(
+      document.getElementById('navSearchInput'),
+      document.getElementById('navAutocomplete')
+    );
+    OST.search.init(
+      document.getElementById('heroSearch'),
+      document.getElementById('heroAutocomplete')
+    );
+
+    // Category chips
+    document.querySelectorAll('.category-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = btn.dataset.category;
+        currentPage = 1;
+        loadMain();
+      });
+    });
+
+    // Check for search query in URL
+    const searchQuery = OST.helpers.getQueryParam('search');
+    if (searchQuery) {
+      document.getElementById('navSearchInput').value = searchQuery;
+      document.getElementById('heroSearch').value = searchQuery;
+    }
+
+    await Promise.all([loadStats(), loadFeaturedStores(), loadMain()]);
+  });
+
+  // ─── Load Stats ──────────────────────────────────────
+  async function loadStats() {
+    try {
+      const [storesData, productsData] = await Promise.all([
+        OST.api.get('/stores', { limit: 1 }),
+        OST.api.get('/products', { limit: 1 })
+      ]);
+      document.getElementById('totalStores').textContent = storesData.pagination?.total || '0';
+      document.getElementById('totalProducts').textContent = productsData.pagination?.total || '0';
+    } catch (e) {}
+  }
+
+  // ─── Load Featured Stores ─────────────────────────────
+  async function loadFeaturedStores() {
+    const container = document.getElementById('featuredStores');
+    OST.skeleton.renderMany(container, 'storeCard', 3);
+
+    try {
+      const data = await OST.api.get('/stores', { featured: 'true', limit: 3 });
+      if (!data.stores.length) {
+        // Load regular stores if no featured
+        const fallback = await OST.api.get('/stores', { limit: 3 });
+        renderStores(container, fallback.stores);
+      } else {
+        renderStores(container, data.stores);
+      }
+    } catch (e) {
+      container.innerHTML = '<p class="form-hint">Imeshindwa kupakia biashara</p>';
+    }
+  }
+
+  // ─── Load Main Grid ───────────────────────────────────
+  async function loadMain(append = false) {
+    const container = document.getElementById('mainGrid');
+    if (!append) OST.skeleton.renderMany(container, currentView === 'stores' ? 'storeCard' : 'productCard', 8);
+
+    const params = {
+      category: currentCategory,
+      region: document.getElementById('regionFilter')?.value || '',
+      sort: document.getElementById('sortFilter')?.value || '-createdAt',
+      page: currentPage,
+      limit: 12
+    };
+
+    const maxPrice = document.getElementById('maxPriceFilter')?.value;
+    if (maxPrice) params.maxPrice = maxPrice;
+
+    const searchQuery = OST.helpers.getQueryParam('search') || document.getElementById('navSearchInput')?.value;
+    if (searchQuery) params.search = searchQuery;
+
+    try {
+      const endpoint = currentView === 'stores' ? '/stores' : '/products';
+      const data = await OST.api.get(endpoint, params);
+      const items = data.stores || data.products || [];
+      totalPages = data.pagination?.pages || 1;
+
+      const count = data.pagination?.total || 0;
+      document.getElementById('resultsCount').textContent = `${count} ${currentView === 'stores' ? 'biashara' : 'bidhaa'}`;
+
+      if (!append) container.innerHTML = '';
+
+      if (!items.length && !append) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1">
+            <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <h3>Hakuna matokeo</h3>
+            <p>Jaribu maneno mengine au uondoe vichujio</p>
+          </div>`;
+        return;
+      }
+
+      if (currentView === 'stores') {
+        renderStores(container, items, append);
+      } else {
+        renderProducts(container, items, append);
+      }
+
+      document.getElementById('loadMoreBtn').style.display =
+        currentPage < totalPages ? 'inline-flex' : 'none';
+
+    } catch (e) {
+      container.innerHTML = `<p class="form-hint" style="grid-column:1/-1">Hitilafu: ${e.message}</p>`;
+    }
+  }
+
+  // ─── Render Functions ─────────────────────────────────
+  function renderStores(container, stores, append = false) {
+    const html = stores.map(store => `
+      <div class="card store-card" onclick="window.location.href='store.html?id=${store._id}'">
+        <div class="store-banner" style="${store.banner ? `background-image:url(${store.banner.url});background-size:cover;background-position:center` : ''}">
+          <img class="store-logo" src="${store.logo?.url || 'assets/icons/store.svg'}" alt="${store.name}" onerror="this.src='assets/icons/store.svg'">
+        </div>
+        <div class="store-info">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div class="store-name">${store.name}</div>
+            ${store.isVerified ? '<span class="badge badge-success" style="font-size:0.7rem">✓ Imethibitishwa</span>' : ''}
+          </div>
+          <div class="store-category">${getCategoryLabel(store.category)} • ${store.location?.region || 'Tanzania'}</div>
+          <div class="store-stats">
+            <div class="store-stat"><strong>${store.stats?.totalProducts || 0}</strong>Bidhaa</div>
+            <div class="store-stat"><strong>${store.stats?.totalOrders || 0}</strong>Mauzo</div>
+            ${store.stats?.rating > 0 ? `<div class="store-stat"><strong>⭐ ${store.stats.rating.toFixed(1)}</strong>Rating</div>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+
+    if (append) container.insertAdjacentHTML('beforeend', html);
+    else container.innerHTML = html;
+  }
+
+  function renderProducts(container, products, append = false) {
+    const html = products.map(product => `
+      <div class="card product-card" onclick="window.location.href='product.html?id=${product._id}'">
+        <div class="img-wrap">
+          <img src="${product.media?.[0]?.url || 'assets/icons/product.svg'}" alt="${product.name}" loading="lazy" onerror="this.src='assets/icons/product.svg'">
+          ${product.isOnSale ? '<span class="badge badge-accent">SALE</span>' : ''}
+          <button class="wishlist-btn" onclick="event.stopPropagation();addToWishlist('${product._id}')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="product-name">${product.name}</div>
+          <div class="product-store">${product.store?.name || ''}</div>
+          <div class="product-price">
+            ${OST.helpers.formatPrice(product.price?.discounted || product.price?.original)}
+            ${product.price?.discounted ? `<span class="original">${OST.helpers.formatPrice(product.price.original)}</span>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+
+    if (append) container.insertAdjacentHTML('beforeend', html);
+    else container.innerHTML = html;
+  }
+
+  // ─── View & Filter Controls ───────────────────────────
+  function setView(view) {
+    currentView = view;
+    currentPage = 1;
+
+    const mainGrid = document.getElementById('mainGrid');
+    mainGrid.className = view === 'stores' ? 'stores-grid' : 'products-grid';
+
+    document.getElementById('viewStoresBtn').className = `btn btn-sm ${view === 'stores' ? 'btn-outline' : 'btn-ghost'}`;
+    document.getElementById('viewProductsBtn').className = `btn btn-sm ${view === 'products' ? 'btn-outline' : 'btn-ghost'}`;
+    document.getElementById('sectionTitle').textContent = view === 'stores' ? 'Biashara Zote' : 'Bidhaa Zote';
+
+    loadMain();
+  }
+
+  function applyFilters() { currentPage = 1; loadMain(); }
+  function loadMore() { currentPage++; loadMain(true); }
+  function doHeroSearch() {
+    const q = document.getElementById('heroSearch').value.trim();
+    if (q) window.location.href = `index.html?search=${encodeURIComponent(q)}`;
+  }
+
+  // ─── Auth Functions ───────────────────────────────────
+  async function doLogin() {
+    const btn = document.getElementById('loginSubmitBtn');
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+
+    try {
+      const data = await OST.api.post('/auth/login', {
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPassword').value
+      });
+      OST.auth.login(data.token, data.user);
+      closeModal('authModal');
+      OST.toast.success(`Karibu, ${data.user.name.split(' ')[0]}!`);
+
+      if (OST.auth.isMerchant()) {
+        setTimeout(() => window.location.href = 'admin/index.html', 1200);
+      }
+    } catch (e) {
+      OST.toast.error(e.message);
+    } finally {
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+    }
+  }
+
+  async function doRegister() {
+    const btn = document.getElementById('regSubmitBtn');
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+
+    try {
+      const data = await OST.api.post('/auth/register', {
+        name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value,
+        phone: document.getElementById('regPhone').value,
+        password: document.getElementById('regPassword').value,
+        role: document.getElementById('regRole').value
+      });
+      OST.auth.login(data.token, data.user);
+      closeModal('authModal');
+      OST.toast.success('Akaunti imeundwa! Karibu OST.');
+
+      if (OST.auth.isMerchant()) {
+        setTimeout(() => window.location.href = 'admin/index.html', 1200);
+      }
+    } catch (e) {
+      OST.toast.error(e.message);
+    } finally {
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+    }
+  }
+
+  function switchToRegister() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+    document.getElementById('authTitle').textContent = 'Unda Akaunti';
+  }
+
+  function switchToLogin() {
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('authTitle').textContent = 'Ingia Akaunti';
+  }
+
+  function getCategoryLabel(cat) {
+    const labels = {
+      fashion:'Nguo',electronics:'Elektroniki',food:'Chakula',beauty:'Urembo',
+      health:'Afya',home:'Nyumbani',sports:'Michezo',agriculture:'Kilimo',
+      art:'Sanaa',services:'Huduma',books:'Vitabu',jewelry:'Mapambo',
+      automotive:'Magari',babies:'Watoto',other:'Nyingine'
+    };
+    return labels[cat] || cat;
+  }
+
+  function addToWishlist(id) { OST.toast.info('Wishlist — Inakuja hivi karibuni!'); }
+  function toggleUserDropdown() { OST.auth.logout(); }
+</script>
+</body>
+</html>
