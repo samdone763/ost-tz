@@ -1,712 +1,514 @@
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Stores TZ — Biashara za Tanzania</title>
-  <meta name="description" content="Gundua biashara bora za Tanzania. Nunua bidhaa za mitaa, usalama wa hali ya juu, delivery kote Tanzania.">
-  <meta property="og:title" content="Online Stores TZ">
-  <meta property="og:description" content="Duka kubwa la Tanzania — bidhaa za aina zote">
-  <meta property="og:image" content="https://samdone763.github.io/onlinestores-tz/assets/icons/og-image.png">
-  <link rel="stylesheet" href="assets/css/main.css">
-  <style>
-    /* ── Hero ── */
-    .hero {
-      min-height: 480px;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 70% 50%, rgba(232,98,26,0.15) 0%, transparent 60%);
-    }
-    .hero-content { position: relative; z-index: 1; max-width: 600px; }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(232,98,26,0.15);
-      border: 1px solid rgba(232,98,26,0.3);
-      color: var(--accent);
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: var(--space-5);
-    }
-    .hero h1 { color: white; margin-bottom: var(--space-4); }
-    .hero p { color: rgba(255,255,255,0.65); font-size: 1.1rem; margin-bottom: var(--space-8); }
-    .hero-search {
-      display: flex;
-      background: white;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow: var(--shadow-xl);
-      max-width: 480px;
-    }
-    .hero-search input {
-      flex: 1;
-      border: none;
-      outline: none;
-      padding: var(--space-4) var(--space-5);
-      font-size: 0.95rem;
-      color: var(--gray-800);
-    }
-    .hero-search button {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: var(--space-4) var(--space-6);
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: var(--transition);
-      white-space: nowrap;
-    }
-    .hero-search button:hover { background: var(--accent-hover); }
-    .hero-stats {
-      display: flex;
-      gap: var(--space-8);
-      margin-top: var(--space-8);
-    }
-    .hero-stat { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
-    .hero-stat strong { display: block; color: white; font-size: 1.5rem; font-family: var(--font-display); }
-
-    /* ── Categories ── */
-    .categories-strip {
-      background: var(--gray-50);
-      border-bottom: 1px solid var(--gray-200);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .categories-strip::-webkit-scrollbar { display: none; }
-    .categories-inner {
-      display: flex;
-      gap: var(--space-2);
-      padding: var(--space-4) 0;
-      width: max-content;
-      min-width: 100%;
-    }
-    .category-chip {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-4);
-      border-radius: var(--radius-full);
-      border: 1.5px solid var(--gray-200);
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--gray-600);
-      background: white;
-      cursor: pointer;
-      transition: var(--transition);
-      white-space: nowrap;
-    }
-    .category-chip:hover, .category-chip.active {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: var(--gray-50);
-    }
-    .category-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-    /* ── Section Headers ── */
-    .section-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: var(--space-6);
-    }
-    .section-header h2 { margin-bottom: var(--space-1); }
-    .section-header p { font-size: 0.9rem; }
-
-    /* ── Filters Bar ── */
-    .filters-bar {
-      display: flex;
-      gap: var(--space-3);
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: var(--space-6);
-    }
-    .filter-select {
-      padding: var(--space-2) var(--space-4);
-      border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius-full);
-      font-size: 0.85rem;
-      color: var(--gray-700);
-      background: white;
-      cursor: pointer;
-      outline: none;
-      transition: var(--transition);
-    }
-    .filter-select:focus { border-color: var(--primary); }
-    .results-count { font-size: 0.85rem; color: var(--gray-400); margin-left: auto; }
-
-    /* ── Promo Banner ── */
-    .promo-banner {
-      background: linear-gradient(135deg, var(--primary) 0%, #2D2D2D 100%);
-      border-radius: var(--radius-xl);
-      padding: var(--space-10) var(--space-8);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-6);
-      overflow: hidden;
-      position: relative;
-      margin: var(--space-12) 0;
-    }
-    .promo-banner::before {
-      content: '';
-      position: absolute;
-      right: -60px;
-      top: -60px;
-      width: 300px;
-      height: 300px;
-      background: rgba(232,98,26,0.12);
-      border-radius: 50%;
-    }
-    .promo-banner h2 { color: white; margin-bottom: var(--space-2); }
-    .promo-banner p { color: rgba(255,255,255,0.65); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>OST — Biashara za Tanzania</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0A0A;--ink2:#141414;--accent:#E8621A;--accent2:#FF8C42;--glass:rgba(255,255,255,0.08);--gb:rgba(255,255,255,0.12);--white:#fff;--fd:'Syne',system-ui,sans-serif;--fb:'Instrument Sans',system-ui,sans-serif;--nav:56px;--bot:64px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:var(--fb);background:var(--ink);color:var(--white);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav);z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(to bottom,rgba(0,0,0,.75),transparent);pointer-events:none}
+.nav>*{pointer-events:all}
+.logo{font-family:var(--fd);font-size:1.25rem;font-weight:800;letter-spacing:-.02em}
+.logo span{color:var(--accent2)}
+.nav-tabs{display:flex;gap:0;background:rgba(0,0,0,.35);backdrop-filter:blur(12px);border-radius:20px;padding:3px;border:1px solid var(--gb)}
+.ntab{padding:5px 13px;border-radius:17px;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;white-space:nowrap}
+.ntab.active{background:var(--white);color:var(--ink)}
+.nav-r{display:flex;align-items:center;gap:8px}
+.nav-ic{width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.4);backdrop-filter:blur(12px);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;position:relative;transition:all .2s}
+.nav-ic:hover{background:rgba(255,255,255,.15)}
+.dot{position:absolute;top:3px;right:3px;width:8px;height:8px;background:var(--accent);border-radius:50%;border:2px solid var(--ink);display:none}
+.login-btn{padding:6px 13px;background:var(--accent);color:var(--white);border-radius:20px;font-size:.75rem;font-weight:700;font-family:var(--fd);transition:all .2s}
+.login-btn:hover{background:var(--accent2)}
+.nav-av{width:32px;height:32px;border-radius:50%;border:2px solid var(--accent2);object-fit:cover;display:none;cursor:pointer}
+/* FEED */
+.feed{position:fixed;inset:0;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.feed::-webkit-scrollbar{display:none}
+/* CARD */
+.fc{position:relative;width:100%;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:var(--ink2)}
+.fc-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.fc-video{cursor:pointer}
+.ov-top{position:absolute;top:0;left:0;right:0;height:160px;background:linear-gradient(to bottom,rgba(0,0,0,.55),transparent);pointer-events:none}
+.ov-bot{position:absolute;bottom:0;left:0;right:0;height:340px;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.4) 55%,transparent 100%);pointer-events:none}
+/* Video progress */
+.vp{position:absolute;bottom:var(--bot);left:0;right:0;height:2px;background:rgba(255,255,255,.2);z-index:10}
+.vp-fill{height:100%;background:var(--accent2);width:0%;transition:width .1s linear}
+/* Play indicator */
+.play-ind{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
+.play-ind.show{opacity:1}
+/* Content */
+.fc-content{position:absolute;bottom:calc(var(--bot) + 12px);left:14px;right:72px;z-index:10}
+.store-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);padding:5px 10px;border-radius:20px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.store-chip:hover{background:rgba(255,255,255,.2)}
+.s-logo-sm{width:18px;height:18px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;color:white;flex-shrink:0}
+.s-name-sm{font-size:.75rem;font-weight:600}
+.s-follow{font-size:.68rem;color:var(--accent2);font-weight:700}
+.prod-title{font-family:var(--fd);font-size:1.25rem;font-weight:700;line-height:1.2;margin-bottom:5px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.prod-desc{font-size:.8rem;color:rgba(255,255,255,.75);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+.price-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.price{font-family:var(--fd);font-size:1.4rem;font-weight:800}
+.price-orig{font-size:.85rem;color:rgba(255,255,255,.45);text-decoration:line-through}
+.disc-badge{background:var(--accent);color:white;font-size:.65rem;font-weight:800;padding:3px 7px;border-radius:20px}
+.cta{display:flex;gap:8px}
+.btn-order{flex:1;padding:11px 14px;background:var(--accent);color:white;border-radius:12px;font-size:.85rem;font-weight:700;font-family:var(--fd);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;cursor:pointer}
+.btn-order:hover{background:var(--accent2);transform:scale(1.02)}
+.btn-cart{width:44px;height:44px;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0}
+.btn-cart:hover{background:rgba(255,255,255,.22)}
+/* Right actions */
+.fc-actions{position:absolute;right:10px;bottom:calc(var(--bot) + 70px);display:flex;flex-direction:column;align-items:center;gap:18px;z-index:10}
+.act-btn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:transform .2s}
+.act-btn:active{transform:scale(.88)}
+.act-icon{width:44px;height:44px;background:rgba(0,0,0,.4);backdrop-filter:blur(12px);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08);transition:all .2s;font-size:1.1rem}
+.act-btn:hover .act-icon{background:rgba(255,255,255,.15)}
+.act-btn.liked .act-icon{background:rgba(232,98,26,.3);border-color:var(--accent)}
+.act-cnt{font-size:.65rem;font-weight:600;color:rgba(255,255,255,.75)}
+/* Media badge */
+.mbadge{position:absolute;top:calc(var(--nav) + 8px);right:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:6px;padding:3px 8px;font-size:.65rem;font-weight:700;z-index:10}
+/* Sound */
+.sound-btn{position:absolute;top:calc(var(--nav) + 8px);left:10px;width:32px;height:32px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:10;cursor:pointer;border:1px solid rgba(255,255,255,.1)}
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:var(--bot);background:rgba(10,10,10,.88);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-around;z-index:200;padding-bottom:env(safe-area-inset-bottom)}
+.bi{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 12px;border-radius:12px;transition:all .2s;position:relative}
+.bi.active .bi-lbl,.bi:hover .bi-lbl{color:var(--accent2)}
+.bi-ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.bi-lbl{font-size:.58rem;font-weight:600;color:rgba(255,255,255,.4);transition:color .2s}
+.bnav-post{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(232,98,26,.4)}
+.bnav-post:hover{transform:scale(1.08)}
+.bi-badge{position:absolute;top:2px;right:6px;width:15px;height:15px;background:var(--accent);border-radius:50%;font-size:.55rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--ink)}
+/* SHEET */
+.so{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s}
+.so.open{opacity:1;pointer-events:all}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:#141414;border-radius:24px 24px 0 0;z-index:301;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);max-height:92vh;overflow-y:auto;scrollbar-width:none;border-top:1px solid rgba(255,255,255,.1)}
+.sheet::-webkit-scrollbar{display:none}
+.sheet.open{transform:translateY(0)}
+.s-handle{width:36px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:12px auto 0}
+.s-head{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.07)}
+.s-title{font-family:var(--fd);font-size:.95rem;font-weight:700}
+.s-close{width:28px;height:28px;background:rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.s-body{padding:18px}
+.s-prod{display:flex;gap:12px;align-items:center;padding:12px;background:rgba(255,255,255,.05);border-radius:14px;margin-bottom:18px;border:1px solid rgba(255,255,255,.07)}
+.s-prod-img{width:60px;height:60px;border-radius:10px;object-fit:cover;flex-shrink:0}
+.s-prod-name{font-weight:700;font-size:.88rem;margin-bottom:3px}
+.s-prod-price{font-family:var(--fd);font-size:1rem;font-weight:800;color:var(--accent2)}
+.di{width:100%;padding:11px 13px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;font-size:.85rem;font-family:var(--fb);color:var(--white);outline:none;transition:all .2s}
+.di:focus{border-color:var(--accent2);background:rgba(255,255,255,.08)}
+.di::placeholder{color:rgba(255,255,255,.28)}
+.dl{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block}
+.dg{margin-bottom:12px}
+.dr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.po{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;cursor:pointer;transition:all .2s}
+.po.sel{border-color:var(--accent2);background:rgba(255,140,66,.1)}
+.po input{accent-color:var(--accent2)}
+.po-icon{font-size:1.1rem}
+.po-name{font-weight:600;font-size:.82rem}
+.po-desc{font-size:.7rem;color:rgba(255,255,255,.38)}
+.btn-sub{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-radius:13px;font-size:.9rem;font-weight:800;font-family:var(--fd);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 20px rgba(232,98,26,.35)}
+.btn-sub:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,98,26,.45)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
+/* AUTH */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);z-index:400;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+.mo.open{opacity:1;pointer-events:all}
+.am{background:#141414;border-radius:24px 24px 0 0;width:100%;padding:20px 18px 36px;border-top:1px solid rgba(255,255,255,.1);transform:translateY(40px);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.mo.open .am{transform:translateY(0)}
+.a-title{font-family:var(--fd);font-size:1.35rem;font-weight:800;margin-bottom:3px;text-align:center}
+.a-sub{font-size:.8rem;color:rgba(255,255,255,.45);text-align:center;margin-bottom:20px}
+.a-tabs{display:flex;gap:0;background:rgba(255,255,255,.06);border-radius:11px;padding:3px;margin-bottom:18px}
+.atab{flex:1;padding:8px;border-radius:8px;font-size:.8rem;font-weight:700;text-align:center;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.38);font-family:var(--fd)}
+.atab.active{background:var(--accent);color:white}
+/* SUCCESS */
+.suc{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:36px}
+.suc.show{display:flex;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.suc-emoji{font-size:4.5rem;margin-bottom:14px;animation:bounce .6s ease}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.suc-title{font-family:var(--fd);font-size:1.5rem;font-weight:800;margin-bottom:6px}
+.suc-sub{font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:6px}
+.suc-num{font-family:var(--fd);font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:22px}
+.suc-btns{display:flex;flex-direction:column;gap:9px;width:100%;max-width:270px}
+.btn-track{padding:12px;background:var(--accent);border-radius:12px;font-weight:700;font-family:var(--fd);font-size:.88rem;cursor:pointer}
+.btn-cont{padding:12px;background:rgba(255,255,255,.08);border-radius:12px;font-weight:600;font-size:.85rem;cursor:pointer;border:1px solid rgba(255,255,255,.12)}
+/* SKELETON */
+.sk{background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.1) 50%,rgba(255,255,255,.05) 75%);background-size:200% 100%;animation:sk 1.5s infinite;border-radius:8px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk-card{position:relative;width:100%;height:100dvh;background:#1a1a1a;display:flex;align-items:flex-end;padding:70px 14px 90px;scroll-snap-align:start}
+/* TOAST */
+.ts{position:fixed;top:calc(var(--nav) + 6px);left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:7px;align-items:center;width:calc(100% - 28px);max-width:340px;pointer-events:none}
+.ti{padding:9px 14px;border-radius:11px;font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:7px;animation:toastIn .3s ease;width:100%;backdrop-filter:blur(12px)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.ti-s{background:rgba(0,200,83,.18);border:1px solid rgba(0,200,83,.28);color:#00E676}
+.ti-e{background:rgba(255,50,50,.18);border:1px solid rgba(255,50,50,.28);color:#FF6B6B}
+.ti-i{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:white}
+/* EMPTY */
+.ef{height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 18px;scroll-snap-align:start;text-align:center}
+.ef h2{font-family:var(--fd);font-size:1.3rem;margin-bottom:7px}
+.ef p{font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:22px}
+@keyframes su{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.su{animation:su .5s ease both}
+</style>
 </head>
 <body>
 
-<!-- ─── Navigation ─────────────────────────────────────── -->
-<nav class="navbar">
-  <div class="container">
-    <a href="index.html" class="nav-logo">Online<span>Stores</span> TZ</a>
-
-    <div class="nav-search search-wrapper">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="navSearchInput" placeholder="Tafuta biashara au bidhaa...">
-      <div id="navAutocomplete" class="autocomplete-dropdown hidden"></div>
-    </div>
-
-    <div class="nav-actions">
-      <a href="index.html" class="btn btn-ghost btn-sm" style="position:relative">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-        <span id="cartBadge" class="badge badge-accent" style="position:absolute;top:-4px;right:-4px;padding:2px 6px;font-size:0.7rem;display:none">0</span>
-      </a>
-
-      <button id="loginBtn" class="btn btn-primary btn-sm" onclick="showModal('authModal')">Ingia</button>
-
-      <div id="userMenu" style="display:none;align-items:center;gap:8px;cursor:pointer" onclick="toggleUserDropdown()">
-        <img id="userAvatar" src="assets/icons/user.svg" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--gray-200)">
-        <span id="userName" style="font-weight:500;font-size:0.9rem"></span>
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-    </div>
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">OST<span>.</span></div>
+  <div class="nav-tabs">
+    <div class="ntab active" onclick="setTab('forYou',this)">Kwako</div>
+    <div class="ntab" onclick="setTab('trending',this)">Trending</div>
+    <div class="ntab" onclick="setTab('stores',this)">Biashara</div>
+  </div>
+  <div class="nav-r">
+    <button class="nav-ic" onclick="openSearch()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button class="nav-ic" onclick="goCart()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+      <div class="dot" id="cartDot"></div>
+    </button>
+    <button class="login-btn" id="loginBtn" onclick="openAuth()">Ingia</button>
+    <img class="nav-av" id="navAv" src="" alt="" onclick="goDash()">
   </div>
 </nav>
 
-<!-- ─── Hero ──────────────────────────────────────────── -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-eyebrow">
-        <span>🇹🇿</span> Biashara za Tanzania
-      </div>
-      <h1>Nunua na Uza<br>Tanzania Nzima</h1>
-      <p>Biashara za mikoa 26 — bidhaa bora, malipo salama, delivery haraka.</p>
+<!-- FEED -->
+<div class="feed" id="feed">
+  <div class="sk-card"><div style="width:100%"><div class="sk" style="height:12px;width:38%;margin-bottom:10px"></div><div class="sk" style="height:26px;width:78%;margin-bottom:7px"></div><div class="sk" style="height:12px;width:55%;margin-bottom:14px"></div><div class="sk" style="height:44px;border-radius:12px"></div></div></div>
+  <div class="sk-card"><div style="width:100%"><div class="sk" style="height:12px;width:45%;margin-bottom:10px"></div><div class="sk" style="height:26px;margin-bottom:7px"></div><div class="sk" style="height:44px;border-radius:12px"></div></div></div>
+</div>
 
-      <div class="hero-search search-wrapper">
-        <input type="text" id="heroSearch" placeholder="Unatafuta nini leo?">
-        <button onclick="doHeroSearch()">Tafuta</button>
-        <div id="heroAutocomplete" class="autocomplete-dropdown hidden"></div>
-      </div>
-
-      <div class="hero-stats">
-        <div class="hero-stat"><strong id="totalStores">—</strong> Biashara</div>
-        <div class="hero-stat"><strong id="totalProducts">—</strong> Bidhaa</div>
-        <div class="hero-stat"><strong>26</strong> Mikoa</div>
-      </div>
-    </div>
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="bi active" onclick="scrollTop()">
+    <div class="bi-ic"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
+    <span class="bi-lbl">Nyumbani</span>
   </div>
-</section>
+  <div class="bi" onclick="openSearch()">
+    <div class="bi-ic"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+    <span class="bi-lbl">Gundua</span>
+  </div>
+  <div class="bnav-post" onclick="goPost()">
+    <svg width="20" height="20" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </div>
+  <div class="bi" onclick="location.href='track.html'">
+    <div class="bi-ic"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+    <span class="bi-lbl">Oda</span>
+  </div>
+  <div class="bi" onclick="goProfile()">
+    <div class="bi-ic"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <span class="bi-lbl">Mimi</span>
+  </div>
+</nav>
 
-<!-- ─── Categories ────────────────────────────────────── -->
-<div class="categories-strip">
-  <div class="container">
-    <div class="categories-inner" id="categoriesStrip">
-      <button class="category-chip active" data-category="">🏪 Zote</button>
-      <button class="category-chip" data-category="fashion">👗 Nguo & Mitindo</button>
-      <button class="category-chip" data-category="electronics">📱 Elektroniki</button>
-      <button class="category-chip" data-category="food">🍽️ Chakula</button>
-      <button class="category-chip" data-category="beauty">💄 Urembo</button>
-      <button class="category-chip" data-category="health">💊 Afya</button>
-      <button class="category-chip" data-category="home">🏠 Nyumbani</button>
-      <button class="category-chip" data-category="sports">⚽ Michezo</button>
-      <button class="category-chip" data-category="agriculture">🌾 Kilimo</button>
-      <button class="category-chip" data-category="art">🎨 Sanaa</button>
-      <button class="category-chip" data-category="services">🔧 Huduma</button>
+<!-- ORDER SHEET -->
+<div class="so" id="so" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">Agiza Sasa 🛒</div>
+    <button class="s-close" onclick="closeSheet()"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="s-body">
+    <div class="s-prod">
+      <img class="s-prod-img" id="sImg" src="" alt="">
+      <div><div class="s-prod-name" id="sName2">—</div><div class="s-prod-price" id="sPrice">—</div></div>
     </div>
+    <div class="dr" style="margin-bottom:12px">
+      <div class="dg" style="margin-bottom:0"><label class="dl">Jina *</label><input type="text" class="di" id="sNm" placeholder="Jina lako"></div>
+      <div class="dg" style="margin-bottom:0"><label class="dl">Simu *</label><input type="tel" class="di" id="sPh" placeholder="0712345678"></div>
+    </div>
+    <div class="dg"><label class="dl">Anwani *</label><input type="text" class="di" id="sAd" placeholder="Mtaa, Wilaya, Mkoa"></div>
+    <div class="dg"><label class="dl">Mkoa</label>
+      <select class="di" id="sRg" style="appearance:none">
+        <option>Dar es Salaam</option><option>Mwanza</option><option>Arusha</option><option>Dodoma</option><option>Mbeya</option><option>Morogoro</option><option>Tanga</option><option>Kilimanjaro</option><option>Kagera</option><option>Iringa</option><option>Mtwara</option><option>Lindi</option><option>Ruvuma</option><option>Singida</option><option>Tabora</option><option>Kigoma</option><option>Shinyanga</option><option>Geita</option><option>Simiyu</option><option>Mara</option><option>Manyara</option><option>Njombe</option><option>Songwe</option><option>Katavi</option><option>Rukwa</option><option>Pwani</option>
+      </select>
+    </div>
+    <label class="dl" style="margin-bottom:9px;display:block">Njia ya Malipo</label>
+    <div class="pay-opts">
+      <label class="po sel" onclick="selPay(this)"><input type="radio" name="pay" value="mpesa" checked><span class="po-icon">📱</span><div><div class="po-name">M-Pesa</div><div class="po-desc">Vodacom Tanzania</div></div></label>
+      <label class="po" onclick="selPay(this)"><input type="radio" name="pay" value="tigo_pesa"><span class="po-icon">📱</span><div><div class="po-name">Tigo Pesa</div><div class="po-desc">Tigo Tanzania</div></div></label>
+      <label class="po" onclick="selPay(this)"><input type="radio" name="pay" value="airtel_money"><span class="po-icon">📱</span><div><div class="po-name">Airtel Money</div><div class="po-desc">Airtel Tanzania</div></div></label>
+      <label class="po" onclick="selPay(this)"><input type="radio" name="pay" value="cash_on_delivery"><span class="po-icon">💵</span><div><div class="po-name">Lipa Ukipokea</div><div class="po-desc">Cash on Delivery</div></div></label>
+    </div>
+    <button class="btn-sub" onclick="submitOrder()" id="subBtn">🔒 Agiza Sasa</button>
   </div>
 </div>
 
-<!-- ─── Main Content ──────────────────────────────────── -->
-<main>
-
-  <!-- Featured Stores -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <h2>Biashara Zilizoangaziwa</h2>
-          <p>Biashara bora zilizochaguliwa kwa ubora</p>
-        </div>
-        <a href="#allStores" class="btn btn-outline btn-sm">Ona Zote</a>
-      </div>
-      <div class="stores-grid" id="featuredStores"></div>
+<!-- AUTH MODAL -->
+<div class="mo" id="mo">
+  <div class="am">
+    <div style="width:34px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:0 auto 18px"></div>
+    <div class="a-title">Karibu OST 🛍️</div>
+    <div class="a-sub">Platform ya biashara ya Tanzania</div>
+    <div class="a-tabs">
+      <div class="atab active" onclick="swAuth('login',this)">Ingia</div>
+      <div class="atab" onclick="swAuth('reg',this)">Jisajili</div>
     </div>
-  </section>
-
-  <!-- Promo Banner -->
-  <div class="container">
-    <div class="promo-banner">
-      <div style="position:relative;z-index:1">
-        <h2>Una Biashara?</h2>
-        <p>Anza kuuza leo. Bure kabisa kuanza. Biashara yako kwa Tanzania nzima.</p>
-        <button class="btn btn-accent" style="margin-top:var(--space-5)" onclick="showModal('authModal')">Anza Sasa — Bure</button>
-      </div>
-      <div style="position:relative;z-index:1;text-align:right">
-        <div style="font-family:var(--font-display);font-size:3rem;color:rgba(255,255,255,0.1)">Shopify ya Tanzania</div>
-      </div>
+    <div id="lf">
+      <div class="dg"><label class="dl">Email</label><input type="email" class="di" id="aEm" placeholder="jina@gmail.com"></div>
+      <div class="dg"><label class="dl">Neno la Siri</label><input type="password" class="di" id="aPw" placeholder="••••••••"></div>
+      <button class="btn-sub" onclick="doLogin()" id="lBtn">Ingia</button>
     </div>
-  </div>
-
-  <!-- All Stores / Products -->
-  <section class="section" id="allStores">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <h2 id="sectionTitle">Biashara Zote</h2>
-          <p id="sectionSubtitle">Gundua biashara kutoka mikoa yote ya Tanzania</p>
-        </div>
-        <div class="flex gap-2">
-          <button class="btn btn-outline btn-sm" id="viewStoresBtn" onclick="setView('stores')">Biashara</button>
-          <button class="btn btn-ghost btn-sm" id="viewProductsBtn" onclick="setView('products')">Bidhaa</button>
-        </div>
-      </div>
-
-      <div class="filters-bar">
-        <select class="filter-select" id="regionFilter" onchange="applyFilters()">
-          <option value="">Mkoa Wote</option>
-          <option>Arusha</option><option>Dar es Salaam</option><option>Dodoma</option>
-          <option>Mwanza</option><option>Mbeya</option><option>Morogoro</option>
-          <option>Tanga</option><option>Kilimanjaro</option><option>Kagera</option>
-          <option>Iringa</option><option>Lindi</option><option>Mtwara</option>
-          <option>Ruvuma</option><option>Singida</option><option>Tabora</option>
-          <option>Kigoma</option><option>Shinyanga</option><option>Geita</option>
-          <option>Simiyu</option><option>Mara</option><option>Manyara</option>
-          <option>Njombe</option><option>Songwe</option><option>Katavi</option>
-          <option>Rukwa</option><option>Pwani</option>
-        </select>
-
-        <select class="filter-select" id="sortFilter" onchange="applyFilters()">
-          <option value="-createdAt">Mpya Kwanza</option>
-          <option value="popular">Maarufu</option>
-          <option value="price-asc">Bei — Chini</option>
-          <option value="price-desc">Bei — Juu</option>
-        </select>
-
-        <input type="number" class="filter-select" id="maxPriceFilter" placeholder="Bei ya juu (TZS)" style="max-width:160px" onchange="applyFilters()">
-
-        <span class="results-count" id="resultsCount"></span>
-      </div>
-
-      <div id="mainGrid" class="stores-grid"></div>
-
-      <div class="text-center" style="margin-top:var(--space-10)">
-        <button id="loadMoreBtn" class="btn btn-outline" onclick="loadMore()" style="display:none">Pakia Zaidi</button>
-      </div>
+    <div id="rf" style="display:none">
+      <div class="dg"><label class="dl">Jina Kamili</label><input type="text" class="di" id="rNm" placeholder="Jina lako kamili"></div>
+      <div class="dr"><div class="dg" style="margin-bottom:0"><label class="dl">Email</label><input type="email" class="di" id="rEm" placeholder="email@gmail.com"></div><div class="dg" style="margin-bottom:0"><label class="dl">Simu</label><input type="tel" class="di" id="rPh" placeholder="0712345678"></div></div>
+      <div class="dg" style="margin-top:12px"><label class="dl">Neno la Siri</label><input type="password" class="di" id="rPw" placeholder="Herufi 8+"></div>
+      <div class="dg"><label class="dl">Mimi ni</label><select class="di" id="rRl" style="appearance:none"><option value="buyer">Mnunuzi</option><option value="merchant">Muuzaji — Nina biashara</option></select></div>
+      <button class="btn-sub" onclick="doReg()" id="rBtn">Unda Akaunti</button>
     </div>
-  </section>
-</main>
-
-<!-- ─── Footer ────────────────────────────────────────── -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-logo">Online<span>Stores</span> TZ</div>
-        <p style="font-size:0.875rem;line-height:1.7">Platform ya biashara ya kidijitali kwa Tanzania nzima. Biashara rahisi, salama, na ya haraka.</p>
-      </div>
-      <div>
-        <h4>Biashara</h4>
-        <ul>
-          <li><a href="#">Anza Biashara</a></li>
-          <li><a href="#">Jinsi Inavyofanya Kazi</a></li>
-          <li><a href="#">Bei na Mipango</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Msaada</h4>
-        <ul>
-          <li><a href="#">Maswali Yanayoulizwa</a></li>
-          <li><a href="#">Wasiliana Nasi</a></li>
-          <li><a href="#">Sera ya Faragha</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Malipo</h4>
-        <ul>
-          <li><a href="#">M-Pesa</a></li>
-          <li><a href="#">Tigo Pesa</a></li>
-          <li><a href="#">Airtel Money</a></li>
-          <li><a href="#">Halopesa</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2025 Online Stores TZ. Haki zote zimehifadhiwa.</span>
-      <span>Imetengenezwa Tanzania 🇹🇿</span>
-    </div>
-  </div>
-</footer>
-
-<!-- ─── Auth Modal ─────────────────────────────────────── -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="authTitle">Ingia Akaunti</h3>
-      <button onclick="closeModal('authModal')" class="btn btn-ghost btn-sm">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <!-- Login Form -->
-      <div id="loginForm">
-        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-input" id="loginEmail" placeholder="jina@example.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Neno la Siri</label>
-            <input type="password" class="form-input" id="loginPassword" placeholder="••••••••">
-          </div>
-          <button class="btn btn-primary btn-full" onclick="doLogin()" id="loginSubmitBtn">Ingia</button>
-          <div class="divider-text">au</div>
-          <button class="btn btn-outline btn-full" onclick="switchToRegister()">Unda Akaunti Mpya</button>
-        </div>
-      </div>
-
-      <!-- Register Form -->
-      <div id="registerForm" style="display:none">
-        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-          <div class="form-group">
-            <label class="form-label">Jina Kamili</label>
-            <input type="text" class="form-input" id="regName" placeholder="Jina lako kamili">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-input" id="regEmail" placeholder="jina@example.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Namba ya Simu</label>
-            <input type="tel" class="form-input" id="regPhone" placeholder="0712345678">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Neno la Siri</label>
-            <input type="password" class="form-input" id="regPassword" placeholder="Herufi 8+">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Aina ya Akaunti</label>
-            <select class="form-select" id="regRole">
-              <option value="buyer">Mnunuzi — Ninataka kununua</option>
-              <option value="merchant">Muuzaji — Nina biashara</option>
-            </select>
-          </div>
-          <button class="btn btn-accent btn-full" onclick="doRegister()" id="regSubmitBtn">Unda Akaunti</button>
-          <button class="btn btn-ghost btn-full" onclick="switchToLogin()">Rudi Ingia</button>
-        </div>
-      </div>
-    </div>
+    <button onclick="closeAuth()" style="width:100%;padding:11px;background:rgba(255,255,255,.05);border-radius:11px;font-size:.8rem;color:rgba(255,255,255,.4);margin-top:9px;cursor:pointer;border:1px solid rgba(255,255,255,.07)">Funga</button>
   </div>
 </div>
 
-<div class="toast-container"></div>
+<!-- SUCCESS -->
+<div class="suc" id="suc">
+  <div class="suc-emoji">🎉</div>
+  <div class="suc-title">Oda Imetumwa!</div>
+  <div class="suc-sub">Muuzaji atakuwasiliana nawe hivi karibuni</div>
+  <div class="suc-num" id="sucNum">#—</div>
+  <div class="suc-btns">
+    <button class="btn-track" onclick="goTrack()">📦 Fuatilia Oda</button>
+    <button class="btn-cont" onclick="contShop()">Endelea Kuangalia</button>
+  </div>
+</div>
 
-<script src="assets/js/app.js"></script>
+<!-- TOAST -->
+<div class="ts" id="ts"></div>
+
 <script>
-  // ─── State ──────────────────────────────────────────
-  let currentView = 'stores';
-  let currentCategory = '';
-  let currentPage = 1;
-  let totalPages = 1;
+const API='https://ost-tz.onrender.com/api';
+let feedItems=[],curTab='forYou',muted=true,curProd=null,curOrderNum=null;
+let liked=new Set(JSON.parse(localStorage.getItem('ost_likes')||'[]'));
 
-  // ─── Init ────────────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', async () => {
-    OST.search.init(
-      document.getElementById('navSearchInput'),
-      document.getElementById('navAutocomplete')
-    );
-    OST.search.init(
-      document.getElementById('heroSearch'),
-      document.getElementById('heroAutocomplete')
-    );
+const tok=()=>localStorage.getItem('ost_token');
+const usr=()=>JSON.parse(localStorage.getItem('ost_user')||'null');
+const fmt=n=>new Intl.NumberFormat('sw-TZ',{style:'currency',currency:'TZS',minimumFractionDigits:0}).format(n||0);
 
-    // Category chips
-    document.querySelectorAll('.category-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.category-chip').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentCategory = btn.dataset.category;
-        currentPage = 1;
-        loadMain();
+const phs=['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80','https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=800&q=80','https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80','https://images.unsplash.com/photo-1608667508764-33cf0726b13a?w=800&q=80','https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=80','https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800&q=80','https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&q=80','https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=800&q=80'];
+
+function initAuth(){
+  const u=usr();
+  if(u){
+    document.getElementById('loginBtn').style.display='none';
+    const av=document.getElementById('navAv');
+    av.style.display='block';
+    av.src=u.avatar?.url||`https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=E8621A&color=fff&bold=true&size=64`;
+  }
+}
+
+async function loadFeed(tab='forYou'){
+  try{
+    const ep=tab==='stores'?'/stores?limit=20':`/products?limit=20&sort=${tab==='trending'?'popular':'-createdAt'}`;
+    const d=await fetch(API+ep).then(r=>r.json());
+    const items=d.products||d.stores||[];
+    if(!items.length){renderEmpty();return;}
+    feedItems=items;
+    renderFeed(items,tab==='stores');
+  }catch(e){renderEmpty();}
+}
+
+function renderFeed(items,isStores=false){
+  const feed=document.getElementById('feed');
+  feed.innerHTML='';
+  items.forEach((item,i)=>{
+    const isVid=item.media?.find(m=>m.type==='video');
+    const img=item.media?.[0]?.url||phs[i%phs.length];
+    const price=item.price?.discounted||item.price?.original;
+    const hasD=!!item.price?.discounted;
+    const disc=hasD?Math.round((1-item.price.discounted/item.price.original)*100):0;
+    const lk=liked.has(item._id);
+    const lkCnt=(item.stats?.wishlistCount||0)+(lk?1:0);
+    const sName=item.store?.name||item.name||'OST Store';
+    const sId=item.store?._id||item._id;
+    const prodData=JSON.stringify({_id:item._id,name:item.name,price:price,image:img,storeId:sId,storeName:sName}).replace(/"/g,'&quot;');
+
+    const card=document.createElement('div');
+    card.className='fc';
+    card.dataset.idx=i;
+
+    card.innerHTML=`
+      ${isVid?`<video class="fc-media fc-video" src="${isVid.url}" loop playsinline preload="metadata" muted></video>`:`<img class="fc-media" src="${img}" alt="${item.name||''}" loading="${i<3?'eager':'lazy'}" onerror="this.src='${phs[0]}'">`}
+      <div class="ov-top"></div>
+      <div class="ov-bot"></div>
+      ${isVid?`<button class="sound-btn" onclick="toggleSound(this,event)"><svg width="13" height="13" fill="white" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" stroke="white" stroke-width="2" fill="none"/></svg></button><div class="vp"><div class="vp-fill"></div></div><div class="play-ind" id="pi-${i}"><svg width="22" height="22" fill="white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`:''}
+      <div class="mbadge">${isVid?'🎥 VIDEO':'📸 PICHA'}</div>
+      <div class="fc-content su">
+        <div class="store-chip" onclick="location.href='store.html?id=${sId}'">
+          <div class="s-logo-sm">${sName[0].toUpperCase()}</div>
+          <span class="s-name-sm">${sName}</span>
+          <span class="s-follow">+ Fuata</span>
+        </div>
+        ${!isStores?`
+          <div class="prod-title">${item.name||''}</div>
+          <div class="prod-desc">${item.description||'Bidhaa bora kutoka Tanzania'}</div>
+          <div class="price-row">
+            <div class="price">${fmt(price)}</div>
+            ${hasD?`<div class="price-orig">${fmt(item.price.original)}</div><div class="disc-badge">-${disc}%</div>`:''}
+          </div>
+          <div class="cta">
+            <button class="btn-order" onclick="openSheet('${prodData}')">🛒 Agiza Sasa</button>
+            <button class="btn-cart" onclick="addCart(event,'${prodData}')">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+        `:`
+          <div class="prod-title">${item.name||''}</div>
+          <div class="prod-desc">${item.description||'Biashara bora Tanzania'}</div>
+          <div class="cta"><button class="btn-order" onclick="location.href='store.html?id=${item._id}'">🏪 Angalia Duka</button></div>
+        `}
+      </div>
+      <div class="fc-actions">
+        <div class="act-btn ${lk?'liked':''}" onclick="toggleLike(this,'${item._id}')">
+          <div class="act-icon">${lk?'❤️':'🤍'}</div>
+          <span class="act-cnt">${lkCnt>0?lkCnt:''}</span>
+        </div>
+        <div class="act-btn" onclick="shareProd('${item._id}','${(item.name||'').replace(/'/g,'')}')">
+          <div class="act-icon">📤</div>
+          <span class="act-cnt">Shiriki</span>
+        </div>
+        <div class="act-btn" onclick="location.href='store.html?id=${sId}'">
+          <div class="act-icon">🏪</div>
+          <span class="act-cnt">Duka</span>
+        </div>
+        ${!isStores?`<div class="act-btn" onclick="location.href='product.html?id=${item._id}'"><div class="act-icon">ℹ️</div><span class="act-cnt">Zaidi</span></div>`:''}
+      </div>`;
+
+    if(isVid){
+      const vid=card.querySelector('video');
+      card.addEventListener('click',e=>{
+        if(e.target.closest('.cta')||e.target.closest('.fc-actions')||e.target.closest('.store-chip')||e.target.closest('.sound-btn'))return;
+        if(vid.paused){vid.play();showPI(i,false);}else{vid.pause();showPI(i,true);}
       });
-    });
-
-    // Check for search query in URL
-    const searchQuery = OST.helpers.getQueryParam('search');
-    if (searchQuery) {
-      document.getElementById('navSearchInput').value = searchQuery;
-      document.getElementById('heroSearch').value = searchQuery;
+      vid.addEventListener('timeupdate',()=>{
+        const f=card.querySelector('.vp-fill');
+        if(f&&vid.duration)f.style.width=(vid.currentTime/vid.duration*100)+'%';
+      });
     }
-
-    await Promise.all([loadStats(), loadFeaturedStores(), loadMain()]);
+    feed.appendChild(card);
   });
 
-  // ─── Load Stats ──────────────────────────────────────
-  async function loadStats() {
-    try {
-      const [storesData, productsData] = await Promise.all([
-        OST.api.get('/stores', { limit: 1 }),
-        OST.api.get('/products', { limit: 1 })
-      ]);
-      document.getElementById('totalStores').textContent = storesData.pagination?.total || '0';
-      document.getElementById('totalProducts').textContent = productsData.pagination?.total || '0';
-    } catch (e) {}
-  }
-
-  // ─── Load Featured Stores ─────────────────────────────
-  async function loadFeaturedStores() {
-    const container = document.getElementById('featuredStores');
-    OST.skeleton.renderMany(container, 'storeCard', 3);
-
-    try {
-      const data = await OST.api.get('/stores', { featured: 'true', limit: 3 });
-      if (!data.stores.length) {
-        // Load regular stores if no featured
-        const fallback = await OST.api.get('/stores', { limit: 3 });
-        renderStores(container, fallback.stores);
-      } else {
-        renderStores(container, data.stores);
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      const v=e.target.querySelector('video');
+      if(v){
+        if(e.isIntersecting){v.muted=muted;v.play().catch(()=>{});}
+        else{v.pause();v.currentTime=0;}
       }
-    } catch (e) {
-      container.innerHTML = '<p class="form-hint">Imeshindwa kupakia biashara</p>';
-    }
-  }
+    });
+  },{threshold:.7});
+  feed.querySelectorAll('.fc').forEach(c=>obs.observe(c));
+}
 
-  // ─── Load Main Grid ───────────────────────────────────
-  async function loadMain(append = false) {
-    const container = document.getElementById('mainGrid');
-    if (!append) OST.skeleton.renderMany(container, currentView === 'stores' ? 'storeCard' : 'productCard', 8);
+function renderEmpty(){
+  document.getElementById('feed').innerHTML=`<div class="ef"><div style="font-size:3.5rem;margin-bottom:14px">🛍️</div><h2>Karibu OST!</h2><p>Hakuna bidhaa bado. Kuwa wa kwanza kuweka bidhaa yako!</p><button class="btn-order" style="width:auto;padding:11px 22px" onclick="goPost()">+ Weka Bidhaa</button></div>`;
+}
 
-    const params = {
-      category: currentCategory,
-      region: document.getElementById('regionFilter')?.value || '',
-      sort: document.getElementById('sortFilter')?.value || '-createdAt',
-      page: currentPage,
-      limit: 12
-    };
+function showPI(idx,show){const el=document.getElementById(`pi-${idx}`);if(!el)return;el.classList.toggle('show',show);if(show)setTimeout(()=>el.classList.remove('show'),900);}
 
-    const maxPrice = document.getElementById('maxPriceFilter')?.value;
-    if (maxPrice) params.maxPrice = maxPrice;
+function setTab(tab,btn){
+  curTab=tab;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('feed').innerHTML=`<div class="sk-card"><div style="width:100%"><div class="sk" style="height:12px;width:38%;margin-bottom:10px"></div><div class="sk" style="height:26px;width:78%;margin-bottom:7px"></div><div class="sk" style="height:44px;border-radius:12px"></div></div></div>`;
+  loadFeed(tab);
+}
 
-    const searchQuery = OST.helpers.getQueryParam('search') || document.getElementById('navSearchInput')?.value;
-    if (searchQuery) params.search = searchQuery;
+function toggleLike(btn,id){
+  const isL=liked.has(id);
+  if(isL)liked.delete(id);else liked.add(id);
+  localStorage.setItem('ost_likes',JSON.stringify([...liked]));
+  btn.classList.toggle('liked',!isL);
+  btn.querySelector('.act-icon').textContent=!isL?'❤️':'🤍';
+  toast(!isL?'❤️ Umependa bidhaa hii':'Umeondoa kwenye mapendwa','info');
+}
 
-    try {
-      const endpoint = currentView === 'stores' ? '/stores' : '/products';
-      const data = await OST.api.get(endpoint, params);
-      const items = data.stores || data.products || [];
-      totalPages = data.pagination?.pages || 1;
+function getCart(){return JSON.parse(localStorage.getItem('ost_cart')||'[]');}
+function saveCart(c){localStorage.setItem('ost_cart',JSON.stringify(c));updCart();}
+function updCart(){const n=getCart().reduce((s,i)=>s+i.quantity,0);document.getElementById('cartDot').style.display=n>0?'block':'none';}
 
-      const count = data.pagination?.total || 0;
-      document.getElementById('resultsCount').textContent = `${count} ${currentView === 'stores' ? 'biashara' : 'bidhaa'}`;
+function addCart(e,data){
+  e.stopPropagation();
+  const item=typeof data==='string'?JSON.parse(data.replace(/&quot;/g,'"')):data;
+  const cart=getCart();const ex=cart.find(i=>i.key===item._id);
+  if(ex)ex.quantity++;else cart.push({key:item._id,productId:item._id,name:item.name,price:item.price,image:item.image,storeId:item.storeId,selectedVariants:[],quantity:1});
+  saveCart(cart);toast(`🛒 ${item.name} imeongezwa!`,'s');
+}
 
-      if (!append) container.innerHTML = '';
+function openSheet(data){
+  const item=typeof data==='string'?JSON.parse(data.replace(/&quot;/g,'"')):data;
+  curProd=item;
+  document.getElementById('sImg').src=item.image||'';
+  document.getElementById('sName2').textContent=item.name;
+  document.getElementById('sPrice').textContent=fmt(item.price);
+  const u=usr();if(u){document.getElementById('sNm').value=u.name||'';document.getElementById('sPh').value=u.phone||'';}
+  document.getElementById('so').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+}
+function closeSheet(){document.getElementById('so').classList.remove('open');document.getElementById('sheet').classList.remove('open');}
+function selPay(el){document.querySelectorAll('.po').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
 
-      if (!items.length && !append) {
-        container.innerHTML = `
-          <div class="empty-state" style="grid-column:1/-1">
-            <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <h3>Hakuna matokeo</h3>
-            <p>Jaribu maneno mengine au uondoe vichujio</p>
-          </div>`;
-        return;
-      }
+async function submitOrder(){
+  if(!curProd)return;
+  const nm=document.getElementById('sNm').value.trim();
+  const ph=document.getElementById('sPh').value.trim();
+  const ad=document.getElementById('sAd').value.trim();
+  const rg=document.getElementById('sRg').value;
+  const mt=document.querySelector('input[name="pay"]:checked')?.value||'mpesa';
+  if(!nm||!ph||!ad){toast('⚠️ Jaza sehemu zote','e');return;}
+  const btn=document.getElementById('subBtn');btn.textContent='Inatuma...';btn.disabled=true;
+  const fees={'Dar es Salaam':3000,'Mwanza':8000,'Arusha':8000,'Dodoma':7000,'Mbeya':10000,'Morogoro':6000,'Pwani':5000};
+  const df=fees[rg]||7000;
+  try{
+    const res=await fetch(`${API}/orders`,{method:'POST',headers:{'Content-Type':'application/json',...(tok()&&{Authorization:`Bearer ${tok()}`})},body:JSON.stringify({storeId:curProd.storeId,items:[{productId:curProd._id,name:curProd.name,price:curProd.price,quantity:1,selectedVariants:[]}],customerInfo:{name:nm,phone:ph,region:rg,address:ad},payment:{method:mt,phoneNumber:ph},pricing:{subtotal:curProd.price,deliveryFee:df,discount:0,total:curProd.price+df}})});
+    const d=await res.json();
+    if(d.success){closeSheet();curOrderNum=d.order.orderNumber;document.getElementById('sucNum').textContent='#'+curOrderNum;document.getElementById('suc').classList.add('show');}
+    else toast(d.message||'Hitilafu','e');
+  }catch(e){toast('Hakuna muunganiko','e');}
+  finally{btn.textContent='🔒 Agiza Sasa';btn.disabled=false;}
+}
 
-      if (currentView === 'stores') {
-        renderStores(container, items, append);
-      } else {
-        renderProducts(container, items, append);
-      }
+function openAuth(){document.getElementById('mo').classList.add('open');}
+function closeAuth(){document.getElementById('mo').classList.remove('open');}
+function swAuth(m,btn){document.querySelectorAll('.atab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.getElementById('lf').style.display=m==='login'?'block':'none';document.getElementById('rf').style.display=m==='reg'?'block':'none';}
 
-      document.getElementById('loadMoreBtn').style.display =
-        currentPage < totalPages ? 'inline-flex' : 'none';
+async function doLogin(){
+  const btn=document.getElementById('lBtn');btn.textContent='Inaingiza...';btn.disabled=true;
+  try{
+    const d=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('aEm').value,password:document.getElementById('aPw').value})}).then(r=>r.json());
+    if(d.success){localStorage.setItem('ost_token',d.token);localStorage.setItem('ost_user',JSON.stringify(d.user));closeAuth();initAuth();toast(`👋 Karibu ${d.user.name.split(' ')[0]}!`,'s');}
+    else toast(d.message,'e');
+  }catch(e){toast('Hitilafu ya mtandao','e');}
+  finally{btn.textContent='Ingia';btn.disabled=false;}
+}
 
-    } catch (e) {
-      container.innerHTML = `<p class="form-hint" style="grid-column:1/-1">Hitilafu: ${e.message}</p>`;
-    }
-  }
+async function doReg(){
+  const btn=document.getElementById('rBtn');btn.textContent='Inaunda...';btn.disabled=true;
+  try{
+    const d=await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('rNm').value,email:document.getElementById('rEm').value,phone:document.getElementById('rPh').value,password:document.getElementById('rPw').value,role:document.getElementById('rRl').value})}).then(r=>r.json());
+    if(d.success){localStorage.setItem('ost_token',d.token);localStorage.setItem('ost_user',JSON.stringify(d.user));closeAuth();initAuth();toast('🎉 Akaunti imeundwa!','s');if(d.user.role==='merchant')setTimeout(()=>location.href='admin/index.html',1400);}
+    else toast(d.message,'e');
+  }catch(e){toast('Hitilafu ya mtandao','e');}
+  finally{btn.textContent='Unda Akaunti';btn.disabled=false;}
+}
 
-  // ─── Render Functions ─────────────────────────────────
-  function renderStores(container, stores, append = false) {
-    const html = stores.map(store => `
-      <div class="card store-card" onclick="window.location.href='store.html?id=${store._id}'">
-        <div class="store-banner" style="${store.banner ? `background-image:url(${store.banner.url});background-size:cover;background-position:center` : ''}">
-          <img class="store-logo" src="${store.logo?.url || 'assets/icons/store.svg'}" alt="${store.name}" onerror="this.src='assets/icons/store.svg'">
-        </div>
-        <div class="store-info">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <div class="store-name">${store.name}</div>
-            ${store.isVerified ? '<span class="badge badge-success" style="font-size:0.7rem">✓ Imethibitishwa</span>' : ''}
-          </div>
-          <div class="store-category">${getCategoryLabel(store.category)} • ${store.location?.region || 'Tanzania'}</div>
-          <div class="store-stats">
-            <div class="store-stat"><strong>${store.stats?.totalProducts || 0}</strong>Bidhaa</div>
-            <div class="store-stat"><strong>${store.stats?.totalOrders || 0}</strong>Mauzo</div>
-            ${store.stats?.rating > 0 ? `<div class="store-stat"><strong>⭐ ${store.stats.rating.toFixed(1)}</strong>Rating</div>` : ''}
-          </div>
-        </div>
-      </div>`).join('');
+function goDash(){const u=usr();if(u?.role==='merchant'||u?.role==='admin')location.href='admin/index.html';else location.href='profile.html';}
+function goPost(){const u=usr();if(!u){openAuth();toast('⚠️ Ingia kwanza','i');return;}if(u.role!=='merchant'){toast('⚠️ Unahitaji akaunti ya muuzaji','i');return;}location.href='admin/products.html?new=1';}
+function goCart(){location.href='checkout.html';}
+function openSearch(){toast('🔍 Search — Inakuja!','i');}
+function scrollTop(){document.getElementById('feed').scrollTo({top:0,behavior:'smooth'});}
+function goProfile(){const u=usr();if(!u)openAuth();else goDash();}
+function goTrack(){location.href=`track.html?order=${curOrderNum}`;}
+function contShop(){document.getElementById('suc').classList.remove('show');}
+function shareProd(id,name){const url=`${location.origin}${location.pathname.replace('index.html','')}product.html?id=${id}`;if(navigator.share)navigator.share({title:name,url});else{navigator.clipboard.writeText(url);toast('🔗 Link imenakiliwa!','s');}}
+function toggleSound(btn,e){e.stopPropagation();muted=!muted;document.querySelectorAll('video').forEach(v=>v.muted=muted);btn.innerHTML=muted?'<svg width="13" height="13" fill="white" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15" stroke="white" stroke-width="2"/><line x1="17" y1="9" x2="23" y2="15" stroke="white" stroke-width="2"/></svg>':'<svg width="13" height="13" fill="white" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" stroke="white" stroke-width="2" fill="none"/></svg>';}
 
-    if (append) container.insertAdjacentHTML('beforeend', html);
-    else container.innerHTML = html;
-  }
+function toast(msg,type='i'){const el=document.createElement('div');el.className=`ti ${type==='s'?'ti-s':type==='e'?'ti-e':'ti-i'}`;el.textContent=msg;const ts=document.getElementById('ts');ts.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2200);}
 
-  function renderProducts(container, products, append = false) {
-    const html = products.map(product => `
-      <div class="card product-card" onclick="window.location.href='product.html?id=${product._id}'">
-        <div class="img-wrap">
-          <img src="${product.media?.[0]?.url || 'assets/icons/product.svg'}" alt="${product.name}" loading="lazy" onerror="this.src='assets/icons/product.svg'">
-          ${product.isOnSale ? '<span class="badge badge-accent">SALE</span>' : ''}
-          <button class="wishlist-btn" onclick="event.stopPropagation();addToWishlist('${product._id}')">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          </button>
-        </div>
-        <div class="card-body">
-          <div class="product-name">${product.name}</div>
-          <div class="product-store">${product.store?.name || ''}</div>
-          <div class="product-price">
-            ${OST.helpers.formatPrice(product.price?.discounted || product.price?.original)}
-            ${product.price?.discounted ? `<span class="original">${OST.helpers.formatPrice(product.price.original)}</span>` : ''}
-          </div>
-        </div>
-      </div>`).join('');
-
-    if (append) container.insertAdjacentHTML('beforeend', html);
-    else container.innerHTML = html;
-  }
-
-  // ─── View & Filter Controls ───────────────────────────
-  function setView(view) {
-    currentView = view;
-    currentPage = 1;
-
-    const mainGrid = document.getElementById('mainGrid');
-    mainGrid.className = view === 'stores' ? 'stores-grid' : 'products-grid';
-
-    document.getElementById('viewStoresBtn').className = `btn btn-sm ${view === 'stores' ? 'btn-outline' : 'btn-ghost'}`;
-    document.getElementById('viewProductsBtn').className = `btn btn-sm ${view === 'products' ? 'btn-outline' : 'btn-ghost'}`;
-    document.getElementById('sectionTitle').textContent = view === 'stores' ? 'Biashara Zote' : 'Bidhaa Zote';
-
-    loadMain();
-  }
-
-  function applyFilters() { currentPage = 1; loadMain(); }
-  function loadMore() { currentPage++; loadMain(true); }
-  function doHeroSearch() {
-    const q = document.getElementById('heroSearch').value.trim();
-    if (q) window.location.href = `index.html?search=${encodeURIComponent(q)}`;
-  }
-
-  // ─── Auth Functions ───────────────────────────────────
-  async function doLogin() {
-    const btn = document.getElementById('loginSubmitBtn');
-    btn.classList.add('btn-loading');
-    btn.disabled = true;
-
-    try {
-      const data = await OST.api.post('/auth/login', {
-        email: document.getElementById('loginEmail').value,
-        password: document.getElementById('loginPassword').value
-      });
-      OST.auth.login(data.token, data.user);
-      closeModal('authModal');
-      OST.toast.success(`Karibu, ${data.user.name.split(' ')[0]}!`);
-
-      if (OST.auth.isMerchant()) {
-        setTimeout(() => window.location.href = 'admin/index.html', 1200);
-      }
-    } catch (e) {
-      OST.toast.error(e.message);
-    } finally {
-      btn.classList.remove('btn-loading');
-      btn.disabled = false;
-    }
-  }
-
-  async function doRegister() {
-    const btn = document.getElementById('regSubmitBtn');
-    btn.classList.add('btn-loading');
-    btn.disabled = true;
-
-    try {
-      const data = await OST.api.post('/auth/register', {
-        name: document.getElementById('regName').value,
-        email: document.getElementById('regEmail').value,
-        phone: document.getElementById('regPhone').value,
-        password: document.getElementById('regPassword').value,
-        role: document.getElementById('regRole').value
-      });
-      OST.auth.login(data.token, data.user);
-      closeModal('authModal');
-      OST.toast.success('Akaunti imeundwa! Karibu OST.');
-
-      if (OST.auth.isMerchant()) {
-        setTimeout(() => window.location.href = 'admin/index.html', 1200);
-      }
-    } catch (e) {
-      OST.toast.error(e.message);
-    } finally {
-      btn.classList.remove('btn-loading');
-      btn.disabled = false;
-    }
-  }
-
-  function switchToRegister() {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registerForm').style.display = 'block';
-    document.getElementById('authTitle').textContent = 'Unda Akaunti';
-  }
-
-  function switchToLogin() {
-    document.getElementById('registerForm').style.display = 'none';
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('authTitle').textContent = 'Ingia Akaunti';
-  }
-
-  function getCategoryLabel(cat) {
-    const labels = {
-      fashion:'Nguo',electronics:'Elektroniki',food:'Chakula',beauty:'Urembo',
-      health:'Afya',home:'Nyumbani',sports:'Michezo',agriculture:'Kilimo',
-      art:'Sanaa',services:'Huduma',books:'Vitabu',jewelry:'Mapambo',
-      automotive:'Magari',babies:'Watoto',other:'Nyingine'
-    };
-    return labels[cat] || cat;
-  }
-
-  function addToWishlist(id) { OST.toast.info('Wishlist — Inakuja hivi karibuni!'); }
-  function toggleUserDropdown() { if(confirm('Unataka kutoka?')) OST.auth.logout(); }
+initAuth();updCart();loadFeed('forYou');
 </script>
 </body>
 </html>

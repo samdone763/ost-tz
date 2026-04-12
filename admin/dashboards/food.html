@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chakula Dashboard — OST</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#FFF8F0;--surface:#fff;--border:#FFE8CC;
+  --ink:#1A0A00;--ink2:#5A3A1A;--ink3:#B08060;
+  --orange:#FF6B35;--orange-soft:#FFF0E8;--orange2:#FF9500;
+  --green:#2ECC71;--green-soft:#E8FBF0;
+  --red:#E74C3C;--red-soft:#FDF0EE;
+  --font:'Nunito',system-ui,sans-serif;--sw:220px;--r:14px
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+/* Sidebar */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:var(--orange);display:flex;flex-direction:column;z-index:100}
+.s-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.2)}
+.s-logo .brand{font-size:1.2rem;font-weight:900;color:#fff;letter-spacing:-.02em}
+.s-logo .brand span{color:rgba(255,255,255,.6)}
+.s-logo small{display:block;font-size:.62rem;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.nav-grp{padding:14px 12px 5px;font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 8px;border-radius:10px;color:rgba(255,255,255,.7);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.15);color:#fff}
+.nav-item.active{background:#fff;color:var(--orange);font-weight:700}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.s-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.2)}
+.s-user{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,.15);border-radius:10px}
+.s-av{width:32px;height:32px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--orange);font-size:.82rem;flex-shrink:0}
+.s-nm{font-size:.78rem;font-weight:700;color:#fff}
+.s-rl{font-size:.66rem;color:rgba(255,255,255,.55)}
+/* Main */
+.main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-size:1rem;font-weight:800;color:var(--ink)}
+.tb-r{display:flex;align-items:center;gap:10px}
+/* Live orders badge */
+.live-badge{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--green-soft);color:var(--green);border-radius:20px;font-size:.75rem;font-weight:700}
+.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.btn-menu{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s}
+.btn-menu:hover{background:#E85A25}
+/* Content */
+.content{padding:20px 24px;flex:1}
+/* Live orders strip */
+.live-orders{background:var(--surface);border-radius:var(--r);border:2px solid var(--orange);padding:0;margin-bottom:20px;overflow:hidden;animation:fu .4s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.lo-head{background:linear-gradient(135deg,var(--orange),var(--orange2));padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.lo-title{font-size:.88rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+.lo-cnt{background:rgba(255,255,255,.25);color:#fff;font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:20px}
+.lo-list{display:flex;flex-direction:column}
+.lo-item{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);transition:background .15s}
+.lo-item:last-child{border-bottom:none}
+.lo-item:hover{background:var(--bg)}
+.lo-num{font-size:.8rem;font-weight:800;color:var(--orange)}
+.lo-cust{font-size:.82rem;font-weight:600;color:var(--ink)}
+.lo-items{font-size:.72rem;color:var(--ink3)}
+.lo-time{font-size:.72rem;color:var(--ink3);white-space:nowrap}
+.lo-amt{font-size:.85rem;font-weight:800;color:var(--ink);white-space:nowrap}
+/* Status chips */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .15s;border:none;font-family:var(--font)}
+.chip-new{background:var(--orange);color:#fff}
+.chip-prep{background:var(--orange-soft);color:var(--orange)}
+.chip-ready{background:var(--green-soft);color:var(--green)}
+.chip-done{background:#f0f0f0;color:var(--ink3)}
+.chip:hover{transform:scale(1.03)}
+/* Metrics */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.mc{background:var(--surface);border-radius:var(--r);padding:16px;border:1px solid var(--border);animation:fu .4s ease both}
+.mc:nth-child(1){animation-delay:.05s}
+.mc:nth-child(2){animation-delay:.1s}
+.mc:nth-child(3){animation-delay:.15s}
+.mc:nth-child(4){animation-delay:.2s}
+.mc-icon{font-size:1.4rem;margin-bottom:10px}
+.mc-val{font-size:1.5rem;font-weight:900;color:var(--ink);letter-spacing:-.02em;line-height:1;margin-bottom:3px}
+.mc-lbl{font-size:.73rem;color:var(--ink3);font-weight:600}
+/* Middle row */
+.mid-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:18px}
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;animation:fu .4s ease .25s both}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:.88rem;font-weight:800;color:var(--ink)}
+.card-body{padding:16px 18px}
+.chart-wrap{height:190px;position:relative}
+/* Menu items */
+.menu-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.menu-item:last-child{border-bottom:none}
+.food-img{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--bg);flex-shrink:0}
+.food-name{font-size:.82rem;font-weight:700;color:var(--ink)}
+.food-cat{font-size:.7rem;color:var(--ink3)}
+.food-price{font-size:.85rem;font-weight:800;color:var(--orange);white-space:nowrap}
+.food-orders{font-size:.7rem;color:var(--ink3);white-space:nowrap}
+/* Delivery zones */
+.zone-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.zone-row:last-child{border-bottom:none}
+.zone-name{font-weight:600;color:var(--ink)}
+.zone-fee{font-weight:700;color:var(--orange)}
+.zone-time{color:var(--ink3);font-size:.73rem}
+/* Bottom */
+.bot-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* Skeleton */
+.sk{background:linear-gradient(90deg,#fff5ee 25%,#ffe8cc 50%,#fff5ee 75%);background-size:200% 100%;animation:sk 1.5s infinite;border-radius:8px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.mob-tog{display:none;position:fixed;top:12px;left:12px;z-index:200;width:36px;height:36px;background:var(--orange);border-radius:10px;border:none;cursor:pointer;align-items:center;justify-content:center;color:#fff}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(2,1fr)}.mid-row{grid-template-columns:1fr}.bot-row{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.ov.open{display:block}.mob-tog{display:flex}.main{margin-left:0}.topbar{padding:0 14px 0 56px}.content{padding:14px}}
+</style>
+</head>
+<body>
+
+<button class="mob-tog" onclick="toggleSidebar()">
+  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="ov" id="ov" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo"><div class="brand">OST<span> Food</span></div><small>Chakula Dashboard</small></div>
+  <div class="nav-grp">Oda</div>
+  <a href="#" class="nav-item active">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Oda za Sasa
+  </a>
+  <a href="../orders.html" class="nav-item">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M8 12h8"/></svg>
+    Historia ya Oda
+  </a>
+  <div class="nav-grp">Menu</div>
+  <a href="../products.html" class="nav-item">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+    Menyu Yangu
+  </a>
+  <div class="nav-grp">Analytics</div>
+  <a href="index.html" class="nav-item">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard Kuu
+  </a>
+  <div class="s-bottom">
+    <div class="s-user">
+      <div class="s-av" id="sAv">S</div>
+      <div><div class="s-nm" id="sNm">Muuzaji</div><div class="s-rl">Food Merchant</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">🍽️ Chakula Dashboard</div>
+    <div class="tb-r">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        Duka Liko Wazi
+      </div>
+      <button class="btn-menu" onclick="location.href='../products.html?new=1'">+ Ongeza Chakula</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Live Orders -->
+    <div class="live-orders">
+      <div class="lo-head">
+        <div class="lo-title">🔴 Oda za Sasa Hivi <span class="lo-cnt" id="liveCount">0</span></div>
+        <button onclick="loadOrders()" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font)">↺ Sasisha</button>
+      </div>
+      <div class="lo-list" id="liveOrdersList">
+        <div style="text-align:center;padding:20px;color:var(--ink3);font-size:.82rem">Inapakia oda...</div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics" id="metrics">
+      <div class="mc"><div class="sk" style="height:30px;width:30px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+      <div class="mc"><div class="sk" style="height:30px;width:30px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+      <div class="mc"><div class="sk" style="height:30px;width:30px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+      <div class="mc"><div class="sk" style="height:30px;width:30px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="mid-row">
+      <div class="card">
+        <div class="card-head"><div class="card-title">📈 Mauzo ya Leo vs Jana</div></div>
+        <div class="card-body"><div class="chart-wrap"><canvas id="salesChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">🏍️ Maeneo ya Delivery</div></div>
+        <div class="card-body">
+          <div class="zone-row"><span class="zone-name">📍 Kariakoo</span><span class="zone-fee">TZS 2,000</span><span class="zone-time">~20 min</span></div>
+          <div class="zone-row"><span class="zone-name">📍 Kinondoni</span><span class="zone-fee">TZS 3,000</span><span class="zone-time">~30 min</span></div>
+          <div class="zone-row"><span class="zone-name">📍 Ilala</span><span class="zone-fee">TZS 2,500</span><span class="zone-time">~25 min</span></div>
+          <div class="zone-row"><span class="zone-name">📍 Temeke</span><span class="zone-fee">TZS 4,000</span><span class="zone-time">~40 min</span></div>
+          <div class="zone-row"><span class="zone-name">📍 Mbagala</span><span class="zone-fee">TZS 5,000</span><span class="zone-time">~50 min</span></div>
+          <a href="#" style="display:block;text-align:center;margin-top:12px;font-size:.75rem;color:var(--orange);font-weight:700">Hariri Maeneo →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bot-row">
+      <div class="card">
+        <div class="card-head"><div class="card-title">🔥 Chakula Kinachopendwa</div><a href="../products.html" style="font-size:.75rem;color:var(--orange);font-weight:700">Menyu Yote →</a></div>
+        <div class="card-body" style="padding:0 18px">
+          <div id="topFoods"><div style="text-align:center;padding:20px;color:var(--ink3);font-size:.82rem">Inapakia...</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">📊 Mgawanyo wa Oda</div></div>
+        <div class="card-body"><div style="position:relative;height:180px"><canvas id="pieChart"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='https://ost-tz.onrender.com/api';
+const token=localStorage.getItem('ost_token');
+const user=JSON.parse(localStorage.getItem('ost_user')||'null');
+if(!token||!user||(user.role!=='merchant'&&user.role!=='admin'))location.href='../../index.html';
+
+document.getElementById('sNm').textContent=user?.name?.split(' ')[0]||'Muuzaji';
+document.getElementById('sAv').textContent=(user?.name||'M')[0].toUpperCase();
+
+let storeId=null,chart=null,pie=null;
+const fmt=n=>new Intl.NumberFormat('sw-TZ',{style:'currency',currency:'TZS',minimumFractionDigits:0}).format(n||0);
+
+async function api(ep,opts={}){const r=await fetch(API+ep,{headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},...opts});return r.json();}
+
+function timeSince(d){const diff=Date.now()-new Date(d);const m=Math.floor(diff/60000);if(m<1)return'Sasa hivi';if(m<60)return`${m} min`;return`${Math.floor(m/60)} saa`;}
+
+async function loadOrders(){
+  if(!storeId)return;
+  try{
+    const d=await api(`/orders/store/${storeId}?status=pending&limit=10`);
+    const orders=d.orders||[];
+    document.getElementById('liveCount').textContent=orders.length;
+    if(!orders.length){document.getElementById('liveOrdersList').innerHTML='<div style="text-align:center;padding:18px;color:var(--ink3);font-size:.82rem">🎉 Hakuna oda zinazosubiri</div>';return;}
+    document.getElementById('liveOrdersList').innerHTML=orders.map(o=>`
+      <div class="lo-item">
+        <div>
+          <div class="lo-num">#${o.orderNumber}</div>
+          <div class="lo-cust">${o.customerInfo?.name||'Mgeni'} • ${o.customerInfo?.region||''}</div>
+          <div class="lo-items">${o.items?.length||0} vipande • ${o.customerInfo?.phone||''}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+          <div class="lo-amt">${fmt(o.pricing?.total)}</div>
+          <div class="lo-time">${timeSince(o.createdAt)}</div>
+          <button onclick="updateStatus('${o._id}','confirmed')" class="chip chip-new">✓ Kubali</button>
+        </div>
+      </div>`).join('');
+  }catch(e){}
+}
+
+async function updateStatus(id,status){
+  await api(`/orders/${id}/status`,{method:'PUT',body:JSON.stringify({status,message:`Oda ${status==='confirmed'?'imekubaliwa':'imesasishwa'}`})});
+  loadOrders();
+}
+
+async function load(){
+  try{
+    const sd=await api('/stores/owner/my-store');
+    if(!sd.success)return;
+    storeId=sd.store._id;
+    await loadOrders();
+    const[an,pr]=await Promise.all([api(`/analytics/${storeId}/overview?period=7`),api(`/products?store=${storeId}&sort=popular&limit=5`)]);
+
+    if(an.success){
+      const ov=an.overview;
+      document.getElementById('metrics').innerHTML=`
+        <div class="mc"><div class="mc-icon">💰</div><div class="mc-val">${fmt(ov.totalRevenue)}</div><div class="mc-lbl">Mapato (wiki)</div></div>
+        <div class="mc"><div class="mc-icon">🛍️</div><div class="mc-val">${ov.totalOrders}</div><div class="mc-lbl">Oda Zote</div></div>
+        <div class="mc"><div class="mc-icon">✅</div><div class="mc-val">${ov.completedOrders}</div><div class="mc-lbl">Zilizofika</div></div>
+        <div class="mc"><div class="mc-icon">⭐</div><div class="mc-val">${ov.totalOrders>0?Math.round(ov.completedOrders/ov.totalOrders*100)+'%':'0%'}</div><div class="mc-lbl">Ukamilikaji</div></div>`;
+
+      // Sales chart
+      const days=an.salesByDay||[];
+      const ctx=document.getElementById('salesChart').getContext('2d');
+      if(chart)chart.destroy();
+      chart=new Chart(ctx,{type:'line',data:{labels:days.map(d=>new Date(d.date).toLocaleDateString('sw-TZ',{day:'numeric',month:'short'})),datasets:[{label:'Mapato',data:days.map(d=>d.revenue||0),borderColor:'#FF6B35',backgroundColor:'rgba(255,107,53,.1)',borderWidth:2.5,fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#FF6B35'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#B08060'}},y:{grid:{color:'#FFF5EE'},ticks:{font:{size:10},color:'#B08060',callback:v=>'TZS '+v.toLocaleString()}}}}});
+
+      // Pie chart
+      const pc=document.getElementById('pieChart').getContext('2d');
+      if(pie)pie.destroy();
+      pie=new Chart(pc,{type:'doughnut',data:{labels:['Zilizofika','Zinazoendelea','Zilizofutwa'],datasets:[{data:[ov.completedOrders||0,(ov.totalOrders||0)-ov.completedOrders-ov.cancelledOrders,ov.cancelledOrders||0],backgroundColor:['#2ECC71','#FF9500','#E74C3C'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}}}}});
+    }
+
+    if(pr.success&&pr.products.length){
+      document.getElementById('topFoods').innerHTML=pr.products.map((p,i)=>`
+        <div class="menu-item">
+          <img class="food-img" src="${p.media?.[0]?.url||''}" onerror="this.style.background='var(--bg)'" alt="">
+          <div style="flex:1;min-width:0"><div class="food-name">${p.name}</div><div class="food-cat">${p.stats?.purchases||0} mauzo</div></div>
+          <div style="text-align:right"><div class="food-price">${fmt(p.price?.original)}</div><div class="food-orders">⭐ Maarufu</div></div>
+        </div>`).join('');
+    }else document.getElementById('topFoods').innerHTML='<div style="text-align:center;padding:20px;color:var(--ink3);font-size:.82rem">Bado hakuna chakula</div>';
+
+  }catch(e){}
+}
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ov').classList.toggle('open');}
+
+load();
+// Auto-refresh oda kila dakika 1
+setInterval(()=>{if(storeId)loadOrders();},60000);
+</script>
+</body>
+</html>
