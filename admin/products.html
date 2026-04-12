@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bidhaa — OST Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F6F9;--surface:#fff;--border:#E8ECF0;--primary:#0A0A0A;--accent:#E8621A;--accent-soft:#FFF3ED;--success:#16A34A;--success-soft:#DCFCE7;--warning:#D97706;--warning-soft:#FEF3C7;--danger:#DC2626;--danger-soft:#FEE2E2;--t1:#0A0A0A;--t2:#4B5563;--t3:#9CA3AF;--font:'Plus Jakarta Sans',system-ui,sans-serif;--sw:240px;--r:14px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:var(--primary);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.s-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.s-logo a{font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-.02em}
+.s-logo span{color:var(--accent)}
+.s-logo small{display:block;font-size:.65rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.nav-sec{padding:14px 12px 6px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 8px;border-radius:10px;color:rgba(255,255,255,.5);font-weight:500;font-size:.85rem;transition:all .15s;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-item svg{flex-shrink:0;width:18px;height:18px}
+.s-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.08)}
+.s-user{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,.06);border-radius:10px}
+.s-avatar{width:34px;height:34px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0}
+.s-name{font-size:.8rem;font-weight:600;color:#fff}
+.s-role{font-size:.68rem;color:rgba(255,255,255,.35)}
+.main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-size:.95rem;font-weight:700}
+.topbar-r{display:flex;align-items:center;gap:10px}
+.content{padding:22px 24px;flex:1}
+/* Toolbar */
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;flex:1;max-width:320px;transition:all .15s}
+.search-box:focus-within{border-color:var(--primary)}
+.search-box input{border:none;outline:none;font-size:.85rem;width:100%;font-family:var(--font);color:var(--t1)}
+.search-box svg{color:var(--t3);flex-shrink:0}
+.filter-sel{padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.83rem;font-family:var(--font);color:var(--t2);background:var(--surface);outline:none;cursor:pointer;transition:all .15s}
+.filter-sel:focus{border-color:var(--primary)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .15s;border:none;font-family:var(--font)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#D4541A}
+.btn-outline{background:var(--surface);color:var(--t1);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--t3)}
+.btn-danger{background:var(--danger-soft);color:var(--danger)}
+.btn-sm{padding:5px 12px;font-size:.78rem}
+.ml-auto{margin-left:auto}
+/* Stats strip */
+.stats-strip{display:flex;gap:14px;margin-bottom:18px}
+.strip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:12px;flex:1}
+.strip-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.strip-val{font-size:1.3rem;font-weight:800;letter-spacing:-.02em}
+.strip-lbl{font-size:.75rem;color:var(--t3);font-weight:500}
+/* Grid/List toggle */
+.view-toggle{display:flex;gap:4px;background:var(--bg);border-radius:8px;padding:3px}
+.view-btn{width:30px;height:30px;border-radius:6px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:all .15s}
+.view-btn.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+/* Products Grid */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.prod-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;transition:all .2s;cursor:pointer;animation:fadeUp .3s ease both}
+.prod-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px)}
+.prod-img-wrap{aspect-ratio:1;overflow:hidden;background:var(--bg);position:relative}
+.prod-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.prod-card:hover .prod-img-wrap img{transform:scale(1.05)}
+.prod-actions{position:absolute;top:8px;right:8px;display:flex;gap:6px;opacity:0;transition:all .2s}
+.prod-card:hover .prod-actions{opacity:1}
+.prod-action-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);transition:all .15s}
+.prod-action-btn:hover{background:#fff;color:var(--t1)}
+.prod-action-btn.del:hover{color:var(--danger)}
+.prod-body{padding:12px}
+.prod-name{font-weight:600;font-size:.85rem;margin-bottom:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.prod-price{font-weight:800;font-size:.95rem;color:var(--t1);margin-bottom:6px}
+.prod-price .orig{font-size:.78rem;color:var(--t3);text-decoration:line-through;font-weight:400;margin-left:4px}
+.prod-meta{display:flex;align-items:center;justify-content:space-between;font-size:.72rem;color:var(--t3)}
+.prod-stock{padding:2px 8px;border-radius:20px;font-weight:600;font-size:.7rem}
+.stock-ok{background:var(--success-soft);color:var(--success)}
+.stock-low{background:var(--warning-soft);color:var(--warning)}
+.stock-out{background:var(--danger-soft);color:var(--danger)}
+/* List view */
+.products-list{display:flex;flex-direction:column;gap:0}
+.list-prod{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);transition:all .15s;cursor:pointer}
+.list-prod:first-child{border-radius:var(--r) var(--r) 0 0}
+.list-prod:last-child{border-radius:0 0 var(--r) var(--r);border-bottom:none}
+.list-prod:hover{background:var(--bg)}
+.list-img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:var(--bg);flex-shrink:0}
+.list-info{flex:1;min-width:0}
+.list-name{font-weight:600;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-cat{font-size:.73rem;color:var(--t3)}
+.list-price{font-weight:800;font-size:.9rem;white-space:nowrap}
+.list-actions{display:flex;gap:6px;flex-shrink:0}
+/* Empty state */
+.empty-state{text-align:center;padding:60px 24px;color:var(--t3)}
+.empty-icon{font-size:3rem;margin-bottom:16px}
+.empty-state h3{font-size:1rem;color:var(--t2);margin-bottom:6px;font-family:var(--font)}
+.empty-state p{font-size:.83rem;margin-bottom:20px}
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:600}
+.b-success{background:var(--success-soft);color:var(--success)}
+.b-warning{background:var(--warning-soft);color:var(--warning)}
+.b-danger{background:var(--danger-soft);color:var(--danger)}
+.b-gray{background:var(--bg);color:var(--t3)}
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px}
+.page-btn{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:.83rem;font-weight:600;color:var(--t2);display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:var(--font)}
+.page-btn:hover{border-color:var(--primary);color:var(--t1)}
+.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.active{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:20px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;transform:scale(.96) translateY(16px);transition:transform .2s}
+.modal-overlay.active .modal{transform:scale(1) translateY(0)}
+.modal-head{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-size:1rem;font-weight:700}
+.modal-body{padding:22px}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+/* Form */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-label{font-size:.8rem;font-weight:600;color:var(--t2)}
+.form-input,.form-select,.form-textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:var(--font);color:var(--t1);outline:none;transition:all .15s;background:var(--surface)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(10,10,10,.06)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-hint{font-size:.73rem;color:var(--t3)}
+/* Upload */
+.upload-area{border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .15s;position:relative}
+.upload-area:hover,.upload-area.drag{border-color:var(--accent);background:var(--accent-soft)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.preview-img{width:64px;height:64px;border-radius:8px;object-fit:cover;border:1.5px solid var(--border);position:relative}
+/* Variants */
+.variant-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:var(--bg);border-radius:8px;font-size:.8rem;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all .15s}
+.variant-chip:hover{border-color:var(--border)}
+.variant-chip.active{background:var(--primary);color:#fff}
+.chip-del{color:var(--t3);cursor:pointer;line-height:1}
+.chip-del:hover{color:var(--danger)}
+/* Skeleton */
+.sk{background:linear-gradient(90deg,#f0f2f5 25%,#e8eaed 50%,#f0f2f5 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.mob-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;width:36px;height:36px;background:var(--primary);border-radius:10px;border:none;cursor:pointer;align-items:center;justify-content:center;color:#fff}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.overlay.open{display:block}.mob-toggle{display:flex}.main{margin-left:0}.topbar{padding:0 14px 0 56px}.content{padding:14px}.stats-strip{flex-wrap:wrap}.products-grid{grid-template-columns:repeat(2,1fr)}.form-row{grid-template-columns:1fr}.toolbar{gap:8px}.search-box{max-width:100%}}
+</style>
+</head>
+<body>
+
+<button class="mob-toggle" onclick="toggleSidebar()">
+  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo"><a href="../index.html">Online<span>Stores</span> TZ</a><small>Admin Panel</small></div>
+  <div class="nav-sec">Muhtasari</div>
+  <a href="index.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  <a href="orders.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M8 12h8"/></svg>Oda</a>
+  <div class="nav-sec">Bidhaa</div>
+  <a href="products.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Bidhaa zangu</a>
+  <div class="nav-sec">Biashara</div>
+  <a href="../index.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Duka Langu</a>
+  <div class="s-bottom">
+    <div class="s-user">
+      <div class="s-avatar" id="sAvatar">S</div>
+      <div><div class="s-name" id="sName">Muuzaji</div><div class="s-role">Merchant</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">Bidhaa Zangu</div>
+    <div class="topbar-r">
+      <button class="btn btn-accent" onclick="openAddModal()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Ongeza Bidhaa
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Stats Strip -->
+    <div class="stats-strip">
+      <div class="strip-card"><div class="strip-icon" style="background:#FFF3ED;font-size:1.1rem">📦</div><div><div class="strip-val" id="totalProds">—</div><div class="strip-lbl">Bidhaa Zote</div></div></div>
+      <div class="strip-card"><div class="strip-icon" style="background:#DCFCE7;font-size:1.1rem">✅</div><div><div class="strip-val" id="activeProds">—</div><div class="strip-lbl">Zinazopatikana</div></div></div>
+      <div class="strip-card"><div class="strip-icon" style="background:#FEF3C7;font-size:1.1rem">⚠️</div><div><div class="strip-val" id="lowStockProds">—</div><div class="strip-lbl">Stock Chini</div></div></div>
+      <div class="strip-card"><div class="strip-icon" style="background:#FEE2E2;font-size:1.1rem">❌</div><div><div class="strip-val" id="outStockProds">—</div><div class="strip-lbl">Zimekwisha</div></div></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Tafuta bidhaa..." oninput="filterProducts()">
+      </div>
+      <select class="filter-sel" id="catFilter" onchange="filterProducts()">
+        <option value="">Aina Zote</option>
+        <option value="fashion">Nguo</option><option value="electronics">Elektroniki</option>
+        <option value="food">Chakula</option><option value="beauty">Urembo</option>
+        <option value="health">Afya</option><option value="home">Nyumbani</option>
+        <option value="sports">Michezo</option><option value="agriculture">Kilimo</option>
+        <option value="other">Nyingine</option>
+      </select>
+      <select class="filter-sel" id="stockFilter" onchange="filterProducts()">
+        <option value="">Stock Yote</option>
+        <option value="ok">Ipo</option>
+        <option value="low">Chini</option>
+        <option value="out">Imekwisha</option>
+      </select>
+      <select class="filter-sel" id="sortFilter" onchange="filterProducts()">
+        <option value="-createdAt">Mpya Kwanza</option>
+        <option value="popular">Maarufu</option>
+        <option value="price-asc">Bei Chini</option>
+        <option value="price-desc">Bei Juu</option>
+      </select>
+      <div class="ml-auto view-toggle">
+        <button class="view-btn active" id="gridBtn" onclick="setView('grid')" title="Grid">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="view-btn" id="listBtn" onclick="setView('list')" title="List">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Products Container -->
+    <div id="productsContainer" class="products-grid"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Ongeza Bidhaa Mpya</div>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--t3)">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editProductId">
+
+      <!-- Picha -->
+      <div class="form-group">
+        <label class="form-label">Picha za Bidhaa</label>
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="imageFiles" accept="image/*" multiple onchange="previewImages(this)">
+          <svg width="32" height="32" fill="none" stroke="var(--t3)" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 8px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div style="font-size:.85rem;font-weight:600;color:var(--t2)">Bonyeza au buruta picha hapa</div>
+          <div style="font-size:.75rem;color:var(--t3);margin-top:4px">JPG, PNG, WebP — hadi 10MB kila moja</div>
+        </div>
+        <div class="upload-preview" id="imagePreview"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Jina la Bidhaa *</label>
+        <input type="text" class="form-input" id="prodName" placeholder="Mfano: Kanzu ya Kiswahili">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Aina *</label>
+          <select class="form-select" id="prodCategory">
+            <option value="">Chagua aina</option>
+            <option value="fashion">👗 Nguo & Mitindo</option>
+            <option value="electronics">📱 Elektroniki</option>
+            <option value="food">🍽️ Chakula</option>
+            <option value="beauty">💄 Urembo</option>
+            <option value="health">💊 Afya</option>
+            <option value="home">🏠 Nyumbani</option>
+            <option value="sports">⚽ Michezo</option>
+            <option value="agriculture">🌾 Kilimo</option>
+            <option value="art">🎨 Sanaa</option>
+            <option value="other">📦 Nyingine</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stock (Idadi)</label>
+          <input type="number" class="form-input" id="prodStock" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Bei ya Kawaida (TZS) *</label>
+          <input type="number" class="form-input" id="prodPrice" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bei ya Sale (TZS)</label>
+          <input type="number" class="form-input" id="prodSalePrice" placeholder="Acha wazi kama hakuna sale">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Maelezo</label>
+        <textarea class="form-textarea" id="prodDesc" placeholder="Elezea bidhaa yako — vipengele, ubora, matumizi..."></textarea>
+      </div>
+
+      <!-- Variants -->
+      <div class="form-group">
+        <label class="form-label">Variants (Rangi / Saizi / Uzito)</label>
+        <div id="variantsContainer"></div>
+        <button type="button" onclick="addVariant()" class="btn btn-outline btn-sm" style="margin-top:8px">
+          + Ongeza Variant
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tags (Maneno ya Kutafutia)</label>
+        <input type="text" class="form-input" id="prodTags" placeholder="Mfano: kanzu, kiswahili, harusi (tenganisha kwa koma)">
+        <div class="form-hint">Tags zinasaidia wateja kukupata kwenye utafutaji</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="prodFeatured" style="width:16px;height:16px;cursor:pointer">
+        <label for="prodFeatured" style="font-size:.83rem;font-weight:500;cursor:pointer">Iangazie bidhaa hii (Featured)</label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button onclick="closeModal()" class="btn btn-outline">Funga</button>
+      <button onclick="saveProduct()" class="btn btn-accent" id="saveBtn">Hifadhi Bidhaa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head"><div class="modal-title">Futa Bidhaa</div></div>
+    <div class="modal-body" style="text-align:center;padding:30px 22px">
+      <div style="font-size:2.5rem;margin-bottom:12px">🗑️</div>
+      <p style="font-size:.9rem;color:var(--t2);margin-bottom:6px">Una uhakika unataka kufuta bidhaa hii?</p>
+      <p style="font-size:.8rem;color:var(--t3)">Hatua hii haiwezi kutenduliwa</p>
+      <input type="hidden" id="deleteProductId">
+    </div>
+    <div class="modal-foot">
+      <button onclick="closeDeleteModal()" class="btn btn-outline">Ghairi</button>
+      <button onclick="confirmDelete()" class="btn btn-danger">Ndiyo, Futa</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:10px"></div>
+
+<script>
+const API = 'https://ost-tz.onrender.com/api';
+const token = localStorage.getItem('ost_token');
+const user = JSON.parse(localStorage.getItem('ost_user') || 'null');
+if (!token || !user || (user.role !== 'merchant' && user.role !== 'admin')) location.href = '../index.html';
+
+document.getElementById('sName').textContent = user?.name?.split(' ')[0] || 'Muuzaji';
+document.getElementById('sAvatar').textContent = (user?.name || 'M')[0].toUpperCase();
+
+let allProducts = [], storeId = null, currentView = 'grid', variantCount = 0;
+
+async function api(endpoint, opts = {}) {
+  const r = await fetch(API + endpoint, {
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    ...opts
+  });
+  return r.json();
+}
+
+function fmt(n) {
+  return new Intl.NumberFormat('sw-TZ', { style:'currency', currency:'TZS', minimumFractionDigits:0 }).format(n || 0);
+}
+
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.style.cssText = `display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);font-size:.83rem;font-weight:500;min-width:260px;animation:fadeUp .3s ease`;
+  el.innerHTML = `<span style="font-size:1.1rem">${type === 'success' ? '✅' : '❌'}</span>${msg}`;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+async function init() {
+  const storeData = await api('/stores/owner/my-store');
+  if (!storeData.success) { toast('Unda biashara kwanza', 'error'); return; }
+  storeId = storeData.store._id;
+  await loadProducts();
+}
+
+async function loadProducts() {
+  const container = document.getElementById('productsContainer');
+  container.innerHTML = Array(6).fill(`<div class="prod-card"><div class="sk" style="aspect-ratio:1;width:100%"></div><div style="padding:12px"><div class="sk" style="height:14px;margin-bottom:8px"></div><div class="sk" style="height:18px;width:60%"></div></div></div>`).join('');
+
+  const data = await api(`/products?store=${storeId}&limit=100`);
+  if (!data.success) return;
+  allProducts = data.products || [];
+  updateStats();
+  filterProducts();
+}
+
+function updateStats() {
+  document.getElementById('totalProds').textContent = allProducts.length;
+  document.getElementById('activeProds').textContent = allProducts.filter(p => p.stock?.quantity > (p.stock?.lowStockThreshold || 5)).length;
+  document.getElementById('lowStockProds').textContent = allProducts.filter(p => p.stock?.quantity > 0 && p.stock?.quantity <= (p.stock?.lowStockThreshold || 5)).length;
+  document.getElementById('outStockProds').textContent = allProducts.filter(p => p.stock?.quantity === 0).length;
+}
+
+function filterProducts() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  const stock = document.getElementById('stockFilter').value;
+  const sort = document.getElementById('sortFilter').value;
+
+  let filtered = allProducts.filter(p => {
+    const matchQ = !q || p.name.toLowerCase().includes(q);
+    const matchCat = !cat || p.category === cat;
+    const qty = p.stock?.quantity || 0;
+    const low = p.stock?.lowStockThreshold || 5;
+    const matchStock = !stock || (stock === 'ok' && qty > low) || (stock === 'low' && qty > 0 && qty <= low) || (stock === 'out' && qty === 0);
+    return matchQ && matchCat && matchStock;
+  });
+
+  if (sort === 'popular') filtered.sort((a,b) => (b.stats?.purchases||0) - (a.stats?.purchases||0));
+  else if (sort === 'price-asc') filtered.sort((a,b) => a.price?.original - b.price?.original);
+  else if (sort === 'price-desc') filtered.sort((a,b) => b.price?.original - a.price?.original);
+  else filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  renderProducts(filtered);
+}
+
+function stockBadge(p) {
+  const qty = p.stock?.quantity || 0;
+  const low = p.stock?.lowStockThreshold || 5;
+  if (qty === 0) return `<span class="prod-stock stock-out">Imekwisha</span>`;
+  if (qty <= low) return `<span class="prod-stock stock-low">${qty} imebaki</span>`;
+  return `<span class="prod-stock stock-ok">${qty} ipo</span>`;
+}
+
+function renderProducts(products) {
+  const container = document.getElementById('productsContainer');
+  if (!products.length) {
+    container.className = '';
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><h3>Hakuna bidhaa</h3><p>Bonyeza "Ongeza Bidhaa" kuanza kuuza</p><button onclick="openAddModal()" class="btn btn-accent">+ Ongeza Bidhaa ya Kwanza</button></div>`;
+    return;
+  }
+
+  if (currentView === 'grid') {
+    container.className = 'products-grid';
+    container.innerHTML = products.map((p, i) => `
+      <div class="prod-card" style="animation-delay:${i*0.04}s">
+        <div class="prod-img-wrap">
+          <img src="${p.media?.[0]?.url || '../assets/icons/product.svg'}" alt="${p.name}" loading="lazy" onerror="this.src='../assets/icons/product.svg'">
+          <div class="prod-actions">
+            <button class="prod-action-btn" onclick="event.stopPropagation();openEditModal('${p._id}')" title="Hariri">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="prod-action-btn del" onclick="event.stopPropagation();openDeleteModal('${p._id}')" title="Futa">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </div>
+          ${p.isOnSale ? '<span style="position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px">SALE</span>' : ''}
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-price">${fmt(p.price?.discounted || p.price?.original)}${p.price?.discounted ? `<span class="orig">${fmt(p.price?.original)}</span>` : ''}</div>
+          <div class="prod-meta">${stockBadge(p)}<span>${p.stats?.purchases || 0} mauzo</span></div>
+        </div>
+      </div>`).join('');
+  } else {
+    container.className = 'products-list';
+    container.innerHTML = products.map(p => `
+      <div class="list-prod">
+        <img class="list-img" src="${p.media?.[0]?.url || '../assets/icons/product.svg'}" onerror="this.src='../assets/icons/product.svg'">
+        <div class="list-info">
+          <div class="list-name">${p.name}</div>
+          <div class="list-cat">${p.category} • ${p.stats?.purchases || 0} mauzo</div>
+        </div>
+        ${stockBadge(p)}
+        <div class="list-price">${fmt(p.price?.discounted || p.price?.original)}</div>
+        <div class="list-actions">
+          <button class="btn btn-outline btn-sm" onclick="openEditModal('${p._id}')">Hariri</button>
+          <button class="btn btn-sm" style="background:var(--danger-soft);color:var(--danger)" onclick="openDeleteModal('${p._id}')">Futa</button>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('gridBtn').classList.toggle('active', v === 'grid');
+  document.getElementById('listBtn').classList.toggle('active', v === 'list');
+  filterProducts();
+}
+
+// Modal
+function openAddModal() {
+  document.getElementById('modalTitle').textContent = 'Ongeza Bidhaa Mpya';
+  document.getElementById('editProductId').value = '';
+  document.getElementById('prodName').value = '';
+  document.getElementById('prodCategory').value = '';
+  document.getElementById('prodPrice').value = '';
+  document.getElementById('prodSalePrice').value = '';
+  document.getElementById('prodStock').value = '';
+  document.getElementById('prodDesc').value = '';
+  document.getElementById('prodTags').value = '';
+  document.getElementById('prodFeatured').checked = false;
+  document.getElementById('imagePreview').innerHTML = '';
+  document.getElementById('variantsContainer').innerHTML = '';
+  variantCount = 0;
+  document.getElementById('productModal').classList.add('active');
+}
+
+function openEditModal(id) {
+  const p = allProducts.find(x => x._id === id);
+  if (!p) return;
+  document.getElementById('modalTitle').textContent = 'Hariri Bidhaa';
+  document.getElementById('editProductId').value = id;
+  document.getElementById('prodName').value = p.name || '';
+  document.getElementById('prodCategory').value = p.category || '';
+  document.getElementById('prodPrice').value = p.price?.original || '';
+  document.getElementById('prodSalePrice').value = p.price?.discounted || '';
+  document.getElementById('prodStock').value = p.stock?.quantity || '';
+  document.getElementById('prodDesc').value = p.description || '';
+  document.getElementById('prodTags').value = (p.tags || []).join(', ');
+  document.getElementById('prodFeatured').checked = p.isFeatured || false;
+  document.getElementById('imagePreview').innerHTML = (p.media || []).map(m =>
+    `<img src="${m.url}" class="preview-img">`).join('');
+  document.getElementById('variantsContainer').innerHTML = '';
+  variantCount = 0;
+  (p.variants || []).forEach(v => addVariant(v));
+  document.getElementById('productModal').classList.add('active');
+}
+
+function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+
+function addVariant(existing = null) {
+  const id = variantCount++;
+  const div = document.createElement('div');
+  div.id = `variant-${id}`;
+  div.style.cssText = 'border:1.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px';
+  div.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <input type="text" class="form-input" placeholder="Jina la variant (mfano: Rangi)" value="${existing?.name || ''}" style="flex:1;margin-right:8px" id="vname-${id}">
+      <button onclick="document.getElementById('variant-${id}').remove()" style="background:var(--danger-soft);color:var(--danger);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.75rem;font-weight:600">Futa</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px" id="vopts-${id}">
+      ${(existing?.options || []).map(o => `<span class="variant-chip active">${o.label}<span class="chip-del" onclick="this.parentElement.remove()">×</span></span>`).join('')}
+    </div>
+    <div style="display:flex;gap:6px">
+      <input type="text" class="form-input" placeholder="Ongeza chaguo (mfano: Nyekundu)" id="vopt-${id}" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();addVariantOption(${id})}">
+      <button onclick="addVariantOption(${id})" class="btn btn-outline btn-sm">+ Ongeza</button>
+    </div>`;
+  document.getElementById('variantsContainer').appendChild(div);
+}
+
+function addVariantOption(id) {
+  const input = document.getElementById(`vopt-${id}`);
+  const val = input.value.trim();
+  if (!val) return;
+  const chip = document.createElement('span');
+  chip.className = 'variant-chip active';
+  chip.innerHTML = `${val}<span class="chip-del" onclick="this.parentElement.remove()">×</span>`;
+  document.getElementById(`vopts-${id}`).appendChild(chip);
+  input.value = '';
+}
+
+function getVariants() {
+  const variants = [];
+  document.querySelectorAll('[id^="variant-"]').forEach(div => {
+    const id = div.id.split('-')[1];
+    const name = document.getElementById(`vname-${id}`)?.value.trim();
+    const options = [...div.querySelectorAll('.variant-chip')].map(c => ({ label: c.textContent.replace('×','').trim() }));
+    if (name && options.length) variants.push({ name, options });
+  });
+  return variants;
+}
+
+function previewImages(input) {
+  const preview = document.getElementById('imagePreview');
+  preview.innerHTML = '';
+  [...input.files].forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'preview-img';
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function saveProduct() {
+  const btn = document.getElementById('saveBtn');
+  const name = document.getElementById('prodName').value.trim();
+  const price = parseFloat(document.getElementById('prodPrice').value);
+  const category = document.getElementById('prodCategory').value;
+
+  if (!name || !price || !category) { toast('Jaza sehemu zote zinazohitajika (*)', 'error'); return; }
+
+  btn.textContent = 'Inahifadhi...';
+  btn.disabled = true;
+
+  try {
+    const editId = document.getElementById('editProductId').value;
+    const payload = {
+      name,
+      category,
+      description: document.getElementById('prodDesc').value,
+      price: { original: price, discounted: parseFloat(document.getElementById('prodSalePrice').value) || null },
+      stock: { quantity: parseInt(document.getElementById('prodStock').value) || 0 },
+      tags: document.getElementById('prodTags').value.split(',').map(t => t.trim()).filter(Boolean),
+      isFeatured: document.getElementById('prodFeatured').checked,
+      variants: getVariants(),
+      media: []
+    };
+
+    let data;
+    if (editId) {
+      data = await api(`/products/${editId}`, { method: 'PUT', body: JSON.stringify(payload) });
+    } else {
+      data = await api('/products', { method: 'POST', body: JSON.stringify(payload) });
+    }
+
+    if (data.success) {
+      toast(editId ? 'Bidhaa imesasishwa!' : 'Bidhaa imeongezwa!');
+      closeModal();
+      await loadProducts();
+    } else {
+      toast(data.message || 'Hitilafu', 'error');
+    }
+  } catch(e) {
+    toast('Hitilafu ya mtandao', 'error');
+  } finally {
+    btn.textContent = 'Hifadhi Bidhaa';
+    btn.disabled = false;
+  }
+}
+
+function openDeleteModal(id) { document.getElementById('deleteProductId').value = id; document.getElementById('deleteModal').classList.add('active'); }
+function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('active'); }
+
+async function confirmDelete() {
+  const id = document.getElementById('deleteProductId').value;
+  const data = await api(`/products/${id}`, { method: 'DELETE' });
+  if (data.success) { toast('Bidhaa imefutwa'); closeDeleteModal(); await loadProducts(); }
+  else toast(data.message || 'Hitilafu', 'error');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+// Open add modal if URL has ?new=1
+if (new URLSearchParams(location.search).get('new') === '1') setTimeout(openAddModal, 500);
+
+init();
+</script>
+</body>
+</html>

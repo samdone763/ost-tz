@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bidhaa — Online Stores TZ</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#0A0A0A;--accent:#E8621A;--accent-soft:#FFF3ED;--success:#16A34A;--success-soft:#DCFCE7;--warning:#D97706;--border:#E5E7EB;--bg:#F9FAFB;--t1:#111827;--t2:#4B5563;--t3:#9CA3AF;--font:'Plus Jakarta Sans',system-ui,sans-serif;--display:'DM Serif Display',Georgia,serif;--r:14px;--nav:60px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--t1);background:#fff;-webkit-font-smoothing:antialiased;font-size:15px}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+.navbar{position:sticky;top:0;z-index:100;height:var(--nav);background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center}
+.navbar .container{display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-logo{font-size:1.1rem;font-weight:800;letter-spacing:-.02em}
+.nav-logo span{color:var(--accent)}
+.nav-back{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--t2);cursor:pointer}
+.nav-back:hover{color:var(--t1)}
+/* Product Layout */
+.product-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:32px 0 48px;align-items:start}
+/* Gallery */
+.gallery-main{aspect-ratio:1;border-radius:16px;overflow:hidden;background:var(--bg);position:relative;cursor:zoom-in}
+.gallery-main img,.gallery-main video{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.gallery-main:hover img{transform:scale(1.03)}
+.gallery-nav{position:absolute;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;width:100%;padding:0 12px;pointer-events:none}
+.gallery-nav button{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t1);box-shadow:0 2px 8px rgba(0,0,0,.12);pointer-events:all;transition:all .15s}
+.gallery-nav button:hover{background:#fff;transform:scale(1.05)}
+.gallery-thumbs{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.gallery-thumbs::-webkit-scrollbar{display:none}
+.gallery-thumb{width:68px;height:68px;flex-shrink:0;border-radius:10px;overflow:hidden;border:2px solid transparent;cursor:pointer;transition:all .15s}
+.gallery-thumb.active{border-color:var(--primary)}
+.gallery-thumb img,.gallery-thumb video{width:100%;height:100%;object-fit:cover}
+.media-type-badge{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:20px}
+/* Product Info */
+.product-info{position:sticky;top:calc(var(--nav) + 20px)}
+.product-breadcrumb{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--t3);margin-bottom:16px;flex-wrap:wrap}
+.product-breadcrumb a{color:var(--t3);transition:color .15s}
+.product-breadcrumb a:hover{color:var(--t1)}
+.product-breadcrumb span{color:var(--border)}
+.product-title{font-family:var(--display);font-size:1.8rem;line-height:1.2;margin-bottom:8px}
+.product-store-link{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:var(--t2);font-weight:500;margin-bottom:16px;padding:5px 10px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.product-store-link:hover{border-color:var(--t3)}
+.product-price-wrap{display:flex;align-items:baseline;gap:10px;margin-bottom:20px}
+.product-price{font-size:2rem;font-weight:800;letter-spacing:-.03em}
+.product-price-orig{font-size:1.1rem;color:var(--t3);text-decoration:line-through;font-weight:400}
+.product-discount{background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:20px}
+.product-desc{font-size:.88rem;color:var(--t2);line-height:1.7;margin-bottom:20px}
+/* Variants */
+.variants-section{margin-bottom:20px}
+.variant-label{font-size:.82rem;font-weight:700;color:var(--t2);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.variant-selected{font-weight:400;color:var(--t3)}
+.variant-chips{display:flex;flex-wrap:wrap;gap:8px}
+.variant-chip{padding:7px 14px;border-radius:10px;border:1.5px solid var(--border);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s;background:#fff}
+.variant-chip:hover{border-color:var(--t3)}
+.variant-chip.active{border-color:var(--primary);background:var(--primary);color:#fff}
+.variant-chip.out{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+/* Stock */
+.stock-indicator{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;margin-bottom:16px}
+.stock-dot{width:8px;height:8px;border-radius:50%}
+/* Quantity */
+.qty-wrap{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.qty-label{font-size:.82rem;font-weight:700;color:var(--t2)}
+.qty-control{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.qty-btn{width:38px;height:38px;background:#fff;border:none;cursor:pointer;font-size:1.1rem;color:var(--t1);transition:all .15s;display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{background:var(--bg)}
+.qty-val{width:44px;text-align:center;font-weight:700;font-size:.9rem;border:none;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+/* Actions */
+.product-actions{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:12px;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .15s;border:none;font-family:var(--font);width:100%}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#1F2937;transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#D4541A;transform:translateY(-1px)}
+.btn-outline{background:#fff;color:var(--t1);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--t3)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+/* Delivery info */
+.delivery-card{background:var(--bg);border-radius:12px;padding:14px;margin-bottom:16px}
+.delivery-row{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:.82rem}
+.delivery-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.delivery-text strong{display:block;font-weight:600;color:var(--t1)}
+.delivery-text span{color:var(--t2)}
+/* Payment methods */
+.payment-methods{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.pay-method{padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:.72rem;font-weight:600;color:var(--t2)}
+/* Tabs */
+.prod-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:40px 0 20px}
+.prod-tab{padding:12px 20px;font-size:.85rem;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.prod-tab.active{color:var(--t1);border-bottom-color:var(--primary)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* Related */
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-top:20px}
+/* Skeleton */
+.sk{background:linear-gradient(90deg,#f0f2f5 25%,#e8eaed 50%,#f0f2f5 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Toast */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:10px}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);min-width:260px;font-size:.83rem;font-weight:500;animation:fadeUp .3s ease}
+/* Lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column}
+.lightbox.open{display:flex}
+.lightbox img,.lightbox video{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:8px}
+.lightbox-close{position:absolute;top:20px;right:20px;color:#fff;background:rgba(255,255,255,.1);border:none;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+@media(max-width:768px){.product-layout{grid-template-columns:1fr;gap:24px}.product-info{position:static}.product-title{font-size:1.4rem}.product-price{font-size:1.6rem}}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <button class="nav-back" id="navBack" onclick="history.back()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Rudi
+    </button>
+    <a href="index.html" class="nav-logo">Online<span>Stores</span> TZ</a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="shareProduct()" style="background:none;border:1.5px solid var(--border);border-radius:10px;padding:7px 12px;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Shiriki
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="product-layout">
+    <!-- Gallery -->
+    <div>
+      <div class="gallery-main" id="galleryMain" onclick="openLightbox()">
+        <div class="sk" style="width:100%;height:100%;position:absolute;inset:0" id="galleryLoader"></div>
+        <img id="mainMedia" src="" alt="" style="display:none">
+        <div class="gallery-nav">
+          <button onclick="event.stopPropagation();prevMedia()"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button onclick="event.stopPropagation();nextMedia()"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+        <span class="media-type-badge" id="mediaBadge" style="display:none"></span>
+      </div>
+      <div class="gallery-thumbs" id="galleryThumbs"></div>
+    </div>
+
+    <!-- Info -->
+    <div class="product-info" id="productInfo">
+      <div class="sk" style="height:14px;width:60%;margin-bottom:12px"></div>
+      <div class="sk" style="height:32px;margin-bottom:8px"></div>
+      <div class="sk" style="height:20px;width:40%;margin-bottom:16px"></div>
+      <div class="sk" style="height:14px;margin-bottom:6px"></div>
+      <div class="sk" style="height:14px;width:80%"></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="prod-tabs">
+    <button class="prod-tab active" onclick="setTab('desc',this)">Maelezo</button>
+    <button class="prod-tab" onclick="setTab('related',this)">Bidhaa Zinazofanana</button>
+  </div>
+  <div class="tab-content active" id="tab-desc">
+    <div id="descContent" style="font-size:.88rem;color:var(--t2);line-height:1.8;max-width:700px"></div>
+  </div>
+  <div class="tab-content" id="tab-related">
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const API = 'https://ost-tz.onrender.com/api';
+const productId = new URLSearchParams(location.search).get('id');
+if (!productId) location.href = 'index.html';
+
+let product = null, currentMediaIdx = 0, selectedVariants = {}, quantity = 1;
+
+function fmt(n) { return new Intl.NumberFormat('sw-TZ', { style:'currency', currency:'TZS', minimumFractionDigits:0 }).format(n || 0); }
+
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span style="font-size:1.1rem">${type==='success'?'✅':type==='error'?'❌':'ℹ️'}</span>${msg}`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+async function loadProduct() {
+  const data = await fetch(`${API}/products/${productId}`).then(r => r.json());
+  if (!data.success) { location.href = 'index.html'; return; }
+  product = data.product;
+  document.title = `${product.name} — OST`;
+  renderProduct();
+  loadRelated();
+}
+
+function renderProduct() {
+  const p = product;
+  const media = p.media || [];
+  const price = p.price?.discounted || p.price?.original;
+  const hasDiscount = !!p.price?.discounted;
+  const discount = hasDiscount ? Math.round((1 - p.price.discounted / p.price.original) * 100) : 0;
+  const stock = p.stock?.quantity || 0;
+  const payMethods = p.store?.paymentMethods || {};
+
+  // Gallery
+  document.getElementById('galleryLoader').style.display = 'none';
+  if (media.length) {
+    const mainImg = document.getElementById('mainMedia');
+    mainImg.style.display = 'block';
+    mainImg.src = media[0].url;
+    mainImg.alt = p.name;
+
+    document.getElementById('galleryThumbs').innerHTML = media.map((m, i) => `
+      <div class="gallery-thumb ${i===0?'active':''}" onclick="setMedia(${i})">
+        <img src="${m.url}" alt="">
+      </div>`).join('');
+  }
+
+  // Info
+  const catLabels = { fashion:'Nguo & Mitindo', electronics:'Elektroniki', food:'Chakula', beauty:'Urembo', health:'Afya', home:'Nyumbani', sports:'Michezo', agriculture:'Kilimo', other:'Nyingine' };
+  document.getElementById('productInfo').innerHTML = `
+    <div class="product-breadcrumb">
+      <a href="index.html">Nyumbani</a>
+      <span>/</span>
+      <a href="store.html?id=${p.store?._id}">${p.store?.name || 'Duka'}</a>
+      <span>/</span>
+      <span style="color:var(--t1)">${p.name}</span>
+    </div>
+
+    <h1 class="product-title">${p.name}</h1>
+
+    <a href="store.html?id=${p.store?._id}" class="product-store-link">
+      🏪 ${p.store?.name} ${p.store?.location?.region ? '• '+p.store.location.region : ''}
+    </a>
+
+    <div class="product-price-wrap">
+      <div class="product-price">${fmt(price)}</div>
+      ${hasDiscount ? `<div class="product-price-orig">${fmt(p.price?.original)}</div><div class="product-discount">-${discount}%</div>` : ''}
+    </div>
+
+    <!-- Stock indicator -->
+    <div class="stock-indicator" style="margin-bottom:16px">
+      <div class="stock-dot" style="background:${stock>10?'#16A34A':stock>0?'#D97706':'#DC2626'}"></div>
+      <span style="color:${stock>10?'var(--success)':stock>0?'var(--warning)':'var(--danger)'}">
+        ${stock>10?'Ipo Stoo':stock>0?`Imebaki ${stock} tu`:'Imekwisha'}
+      </span>
+    </div>
+
+    <!-- Variants -->
+    ${(p.variants || []).map(v => `
+      <div class="variants-section">
+        <div class="variant-label">
+          ${v.name}
+          <span class="variant-selected" id="sel-${v.name}">— Chagua</span>
+        </div>
+        <div class="variant-chips">
+          ${(v.options || []).map(opt => `
+            <button class="variant-chip ${opt.stock===0?'out':''}" 
+              onclick="${opt.stock!==0?`selectVariant('${v.name}','${opt.label}',this)`:'return'}"
+              title="${opt.stock===0?'Imekwisha':''}">
+              ${opt.label}${opt.priceModifier > 0 ? ` (+${fmt(opt.priceModifier)})` : ''}
+            </button>`).join('')}
+        </div>
+      </div>`).join('')}
+
+    <!-- Quantity -->
+    ${stock > 0 ? `
+    <div class="qty-wrap">
+      <span class="qty-label">Idadi:</span>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-val" id="qtyDisplay">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>` : ''}
+
+    <!-- Actions -->
+    <div class="product-actions">
+      <button class="btn btn-accent" onclick="addToCart()" ${stock===0?'disabled':''}>
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        ${stock===0?'Imekwisha':'Ongeza Kwenye Mkoba'}
+      </button>
+      <button class="btn btn-primary" onclick="buyNow()" ${stock===0?'disabled':''}>
+        Nunua Sasa →
+      </button>
+    </div>
+
+    <!-- Delivery -->
+    <div class="delivery-card">
+      <div class="delivery-row">
+        <span class="delivery-icon">🚚</span>
+        <div class="delivery-text">
+          <strong>Delivery Tanzania Nzima</strong>
+          <span>${p.store?.delivery?.available ? 'Inapatikana — Ada kulingana na mkoa' : 'Wasiliana na muuzaji kwa bei ya delivery'}</span>
+        </div>
+      </div>
+      <div class="delivery-row">
+        <span class="delivery-icon">🔒</span>
+        <div class="delivery-text">
+          <strong>Ununuzi Salama</strong>
+          <span>Malipo salama kupitia mifumo rasmi</span>
+        </div>
+      </div>
+      <div class="delivery-row">
+        <span class="delivery-icon">↩️</span>
+        <div class="delivery-text">
+          <strong>Mawasiliano ya Haraka</strong>
+          <span>Wasiliana na muuzaji moja kwa moja</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <div style="font-size:.75rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Malipo Yanayokubaliwa</div>
+    <div class="payment-methods">
+      ${payMethods.mpesa ? '<span class="pay-method">M-Pesa</span>' : ''}
+      ${payMethods.tigoPesa ? '<span class="pay-method">Tigo Pesa</span>' : ''}
+      ${payMethods.airtelMoney ? '<span class="pay-method">Airtel Money</span>' : ''}
+      ${payMethods.halopesa ? '<span class="pay-method">Halopesa</span>' : ''}
+      ${payMethods.cashOnDelivery ? '<span class="pay-method">Lipa Ukipokea</span>' : ''}
+      ${payMethods.card ? '<span class="pay-method">Kadi</span>' : ''}
+    </div>
+  `;
+
+  document.getElementById('descContent').textContent = p.description || 'Maelezo hayajaandikwa bado.';
+}
+
+function setMedia(idx) {
+  currentMediaIdx = idx;
+  const media = product?.media || [];
+  if (!media[idx]) return;
+  const el = document.getElementById('mainMedia');
+  el.src = media[idx].url;
+  document.querySelectorAll('.gallery-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.getElementById('lightboxImg').src = media[idx].url;
+}
+
+function prevMedia() { const len = product?.media?.length || 1; setMedia((currentMediaIdx - 1 + len) % len); }
+function nextMedia() { const len = product?.media?.length || 1; setMedia((currentMediaIdx + 1) % len); }
+
+function selectVariant(variantName, optionLabel, btn) {
+  selectedVariants[variantName] = optionLabel;
+  const section = btn.closest('.variants-section');
+  section.querySelectorAll('.variant-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const selEl = document.getElementById(`sel-${variantName}`);
+  if (selEl) selEl.textContent = optionLabel;
+}
+
+function changeQty(delta) {
+  const max = product?.stock?.quantity || 1;
+  quantity = Math.max(1, Math.min(max, quantity + delta));
+  document.getElementById('qtyDisplay').textContent = quantity;
+}
+
+function getCart() { return JSON.parse(localStorage.getItem('ost_cart') || '[]'); }
+function saveCart(c) { localStorage.setItem('ost_cart', JSON.stringify(c)); }
+
+function addToCart() {
+  if (!product) return;
+  const p = product;
+  const key = `${p._id}_${JSON.stringify(selectedVariants)}`;
+  const cart = getCart();
+  const existing = cart.find(i => i.key === key);
+  if (existing) { existing.quantity += quantity; }
+  else {
+    cart.push({
+      key, productId: p._id, name: p.name,
+      price: p.price?.discounted || p.price?.original,
+      image: p.media?.[0]?.url,
+      storeId: p.store?._id, storeName: p.store?.name,
+      selectedVariants: Object.entries(selectedVariants).map(([k,v]) => ({ variantName: k, optionLabel: v })),
+      quantity
+    });
+  }
+  saveCart(cart);
+  toast(`${p.name} imeongezwa kwenye mkoba!`);
+}
+
+function buyNow() { addToCart(); location.href = 'checkout.html'; }
+function shareProduct() {
+  if (navigator.share) navigator.share({ title: product?.name, url: location.href });
+  else { navigator.clipboard.writeText(location.href); toast('Link imenakiliwa!', 'info'); }
+}
+
+function openLightbox() {
+  const media = product?.media;
+  if (!media?.length) return;
+  document.getElementById('lightboxImg').src = media[currentMediaIdx].url;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
+
+async function loadRelated() {
+  if (!product) return;
+  const data = await fetch(`${API}/products?store=${product.store?._id}&category=${product.category}&limit=6`).then(r => r.json());
+  if (!data.success) return;
+  const related = (data.products || []).filter(p => p._id !== productId).slice(0, 4);
+  if (!related.length) { document.getElementById('relatedGrid').innerHTML = '<p style="color:var(--t3);font-size:.85rem">Hakuna bidhaa zinazofanana</p>'; return; }
+  document.getElementById('relatedGrid').innerHTML = related.map(p => `
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s" onclick="location.href='product.html?id=${p._id}'">
+      <div style="aspect-ratio:1;overflow:hidden;background:var(--bg)">
+        <img src="${p.media?.[0]?.url||'assets/icons/product.svg'}" style="width:100%;height:100%;object-fit:cover">
+      </div>
+      <div style="padding:10px">
+        <div style="font-weight:600;font-size:.82rem;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
+        <div style="font-weight:800;font-size:.88rem">${fmt(p.price?.discounted||p.price?.original)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function setTab(id, btn) {
+  document.querySelectorAll('.prod-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`tab-${id}`).classList.add('active');
+}
+
+loadProduct();
+</script>
+</body>
+</html>

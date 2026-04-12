@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duka — Online Stores TZ</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#0A0A0A;--accent:#E8621A;--accent-soft:#FFF3ED;--success:#16A34A;--success-soft:#DCFCE7;--warning:#D97706;--warning-soft:#FEF3C7;--danger:#DC2626;--danger-soft:#FEE2E2;--info:#2563EB;--border:#E5E7EB;--bg:#F9FAFB;--t1:#111827;--t2:#4B5563;--t3:#9CA3AF;--font:'Plus Jakarta Sans',system-ui,sans-serif;--display:'DM Serif Display',Georgia,serif;--r:14px;--nav:60px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--t1);background:#fff;-webkit-font-smoothing:antialiased;font-size:15px}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+/* Nav */
+.navbar{position:sticky;top:0;z-index:100;height:var(--nav);background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center}
+.navbar .container{display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-logo{font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+.nav-logo span{color:var(--accent)}
+.nav-back{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--t2);cursor:pointer;transition:color .15s}
+.nav-back:hover{color:var(--t1)}
+.nav-r{display:flex;align-items:center;gap:12px}
+/* Banner */
+.store-banner{height:200px;background:linear-gradient(135deg,var(--primary),#374151);position:relative;overflow:hidden}
+.store-banner img{width:100%;height:100%;object-fit:cover}
+.store-banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.6))}
+.store-header{position:relative;margin-top:-40px;padding:0 0 24px}
+.store-logo-wrap{display:flex;align-items:flex-end;gap:16px;margin-bottom:14px}
+.store-logo{width:80px;height:80px;border-radius:16px;border:4px solid #fff;object-fit:cover;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12);flex-shrink:0}
+.store-title{font-family:var(--display);font-size:1.8rem;color:var(--t1);margin-bottom:4px}
+.store-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.store-tag{display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--t2)}
+.store-verified{background:var(--success-soft);color:var(--success);padding:3px 10px;border-radius:20px;font-size:.73rem;font-weight:700}
+.store-desc{font-size:.88rem;color:var(--t2);max-width:600px;line-height:1.6;margin-top:10px}
+.store-contact{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.contact-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:.8rem;font-weight:600;border:1.5px solid var(--border);cursor:pointer;transition:all .15s;background:#fff}
+.contact-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* Products section */
+.section{padding:32px 0}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-title{font-size:1.1rem;font-weight:700}
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:.8rem;font-weight:600;color:var(--t2);cursor:pointer;transition:all .15s;background:#fff;white-space:nowrap}
+.filter-chip:hover,.filter-chip.active{border-color:var(--primary);color:var(--t1);background:var(--primary);color:#fff}
+.sort-sel{padding:7px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.8rem;font-family:var(--font);outline:none;color:var(--t2);background:#fff;cursor:pointer;margin-left:auto}
+/* Grid */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.prod-card{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;background:#fff}
+.prod-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.08);transform:translateY(-2px)}
+.prod-img{aspect-ratio:1;overflow:hidden;background:var(--bg);position:relative}
+.prod-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.prod-card:hover .prod-img img{transform:scale(1.05)}
+.prod-sale-badge{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:.68rem;font-weight:800;padding:3px 8px;border-radius:20px}
+.prod-body{padding:12px}
+.prod-name{font-weight:600;font-size:.85rem;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.4}
+.prod-price{font-weight:800;font-size:.95rem}
+.prod-price .orig{font-size:.78rem;color:var(--t3);text-decoration:line-through;font-weight:400;margin-left:4px}
+.prod-variants{font-size:.73rem;color:var(--t3);margin-top:3px}
+/* Skeleton */
+.sk{background:linear-gradient(90deg,#f0f2f5 25%,#e8eaed 50%,#f0f2f5 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Empty */
+.empty{text-align:center;padding:50px 20px;color:var(--t3)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px}
+.empty h3{font-size:.95rem;color:var(--t2);margin-bottom:6px;font-family:var(--font)}
+/* Badge */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:.72rem;font-weight:600}
+.b-success{background:var(--success-soft);color:var(--success)}
+.b-warning{background:var(--warning-soft);color:var(--warning)}
+/* Btn */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:10px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;border:none;font-family:var(--font)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#1F2937}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#D4541A}
+.btn-outline{background:#fff;color:var(--t1);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--t3)}
+.btn-full{width:100%;justify-content:center}
+@media(max-width:768px){.store-title{font-size:1.4rem}.products-grid{grid-template-columns:repeat(2,1fr);gap:10px}.store-banner{height:150px}.store-logo{width:64px;height:64px}}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <button class="nav-back" onclick="history.back()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Rudi Nyumbani
+    </button>
+    <a href="index.html" class="nav-logo">Online<span>Stores</span> TZ</a>
+    <div class="nav-r">
+      <button class="btn btn-accent" style="padding:7px 14px;font-size:.8rem" onclick="shareStore()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Shiriki
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Banner -->
+<div class="store-banner" id="storeBanner">
+  <div class="store-banner-overlay"></div>
+</div>
+
+<!-- Store Info -->
+<div class="container">
+  <div class="store-header">
+    <div class="store-logo-wrap">
+      <img class="store-logo" id="storeLogo" src="assets/icons/store.svg" alt="">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <h1 class="store-title" id="storeName">Inapakia...</h1>
+          <span class="store-verified" id="storeVerified" style="display:none">✓ Imethibitishwa</span>
+        </div>
+        <div class="store-meta" id="storeMeta"></div>
+      </div>
+    </div>
+    <p class="store-desc" id="storeDesc"></p>
+    <div class="store-contact" id="storeContact"></div>
+  </div>
+
+  <!-- Products -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title" id="prodsTitle">Bidhaa</div>
+      <span style="font-size:.8rem;color:var(--t3)" id="prodsCount"></span>
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-chip active" data-cat="" onclick="filterByCategory('',this)">Zote</button>
+      <select class="sort-sel" id="sortSel" onchange="loadProducts()">
+        <option value="-createdAt">Mpya</option>
+        <option value="popular">Maarufu</option>
+        <option value="price-asc">Bei Chini</option>
+        <option value="price-desc">Bei Juu</option>
+      </select>
+    </div>
+
+    <div class="products-grid" id="prodsGrid">
+      ${Array(8).fill(`<div class="prod-card"><div class="sk" style="aspect-ratio:1;width:100%"></div><div style="padding:12px"><div class="sk" style="height:14px;margin-bottom:8px"></div><div class="sk" style="height:16px;width:50%"></div></div></div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://ost-tz.onrender.com/api';
+const storeId = new URLSearchParams(location.search).get('id');
+if (!storeId) location.href = 'index.html';
+
+let allProducts = [], currentCategory = '';
+
+function fmt(n) { return new Intl.NumberFormat('sw-TZ', { style:'currency', currency:'TZS', minimumFractionDigits:0 }).format(n || 0); }
+
+async function loadStore() {
+  try {
+    const data = await fetch(`${API}/stores/${storeId}`).then(r => r.json());
+    if (!data.success) { location.href = 'index.html'; return; }
+    const s = data.store;
+
+    document.title = `${s.name} — OST`;
+    if (s.banner?.url) { document.getElementById('storeBanner').style.backgroundImage = `url(${s.banner.url})`; document.getElementById('storeBanner').style.backgroundSize = 'cover'; document.getElementById('storeBanner').style.backgroundPosition = 'center'; }
+    if (s.logo?.url) document.getElementById('storeLogo').src = s.logo.url;
+    document.getElementById('storeName').textContent = s.name;
+    if (s.isVerified) document.getElementById('storeVerified').style.display = 'inline-flex';
+    document.getElementById('storeDesc').textContent = s.description || '';
+
+    const catLabels = { fashion:'👗 Nguo', electronics:'📱 Elektroniki', food:'🍽️ Chakula', beauty:'💄 Urembo', health:'💊 Afya', home:'🏠 Nyumbani', sports:'⚽ Michezo', agriculture:'🌾 Kilimo', art:'🎨 Sanaa', services:'🔧 Huduma', other:'📦 Nyingine' };
+    document.getElementById('storeMeta').innerHTML = `
+      <span class="store-tag">🏷️ ${catLabels[s.category] || s.category}</span>
+      ${s.location?.region ? `<span class="store-tag">📍 ${s.location.region}</span>` : ''}
+      ${s.stats?.totalProducts ? `<span class="store-tag">📦 ${s.stats.totalProducts} bidhaa</span>` : ''}
+      ${s.stats?.rating > 0 ? `<span class="store-tag">⭐ ${s.stats.rating.toFixed(1)}</span>` : ''}`;
+
+    const contacts = [];
+    if (s.contact?.whatsapp) contacts.push(`<a href="https://wa.me/${s.contact.whatsapp.replace(/\D/g,'')}" class="contact-btn" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>`);
+    if (s.contact?.phone) contacts.push(`<a href="tel:${s.contact.phone}" class="contact-btn">📞 ${s.contact.phone}</a>`);
+    document.getElementById('storeContact').innerHTML = contacts.join('');
+
+    await loadProducts(s._id);
+  } catch(e) { console.error(e); }
+}
+
+async function loadProducts(sid) {
+  const sort = document.getElementById('sortSel')?.value || '-createdAt';
+  const data = await fetch(`${API}/products?store=${sid || storeId}&sort=${sort}&limit=100`).then(r => r.json());
+  if (!data.success) return;
+  allProducts = data.products || [];
+
+  // Build category filters
+  const cats = [...new Set(allProducts.map(p => p.category))];
+  const catLabels = { fashion:'Nguo', electronics:'Elektroniki', food:'Chakula', beauty:'Urembo', health:'Afya', home:'Nyumbani', sports:'Michezo', agriculture:'Kilimo', art:'Sanaa', services:'Huduma', other:'Nyingine' };
+  const filterBar = document.getElementById('filterBar');
+  const existingChips = filterBar.querySelectorAll('.filter-chip');
+  existingChips.forEach((c, i) => { if (i > 0) c.remove(); });
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip';
+    btn.dataset.cat = cat;
+    btn.textContent = catLabels[cat] || cat;
+    btn.onclick = function() { filterByCategory(cat, this); };
+    filterBar.insertBefore(btn, filterBar.querySelector('.sort-sel'));
+  });
+
+  filterProducts();
+}
+
+function filterByCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterProducts();
+}
+
+function filterProducts() {
+  const filtered = currentCategory ? allProducts.filter(p => p.category === currentCategory) : allProducts;
+  document.getElementById('prodsCount').textContent = `${filtered.length} bidhaa`;
+
+  if (!filtered.length) {
+    document.getElementById('prodsGrid').innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📦</div><h3>Hakuna bidhaa</h3><p>Bado hakuna bidhaa katika aina hii</p></div>`;
+    return;
+  }
+
+  document.getElementById('prodsGrid').innerHTML = filtered.map((p, i) => `
+    <div class="prod-card" onclick="location.href='product.html?id=${p._id}'" style="animation:fadeUp .3s ease ${i*0.03}s both">
+      <div class="prod-img">
+        <img src="${p.media?.[0]?.url || 'assets/icons/product.svg'}" alt="${p.name}" loading="lazy" onerror="this.src='assets/icons/product.svg'">
+        ${p.isOnSale ? '<span class="prod-sale-badge">SALE</span>' : ''}
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price">${fmt(p.price?.discounted || p.price?.original)}${p.price?.discounted ? `<span class="orig">${fmt(p.price?.original)}</span>` : ''}</div>
+        ${p.variants?.length ? `<div class="prod-variants">${p.variants.map(v => v.name).join(' · ')}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function shareStore() {
+  if (navigator.share) {
+    navigator.share({ title: document.getElementById('storeName').textContent, url: location.href });
+  } else {
+    navigator.clipboard.writeText(location.href);
+    alert('Link imenakiliwa!');
+  }
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+loadStore();
+</script>
+</body>
+</html>

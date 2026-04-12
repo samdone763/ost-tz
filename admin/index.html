@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — OST Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#F4F6F9;--surface:#fff;--border:#E8ECF0;--primary:#0A0A0A;--accent:#E8621A;--accent-soft:#FFF3ED;--success:#16A34A;--success-soft:#DCFCE7;--warning:#D97706;--warning-soft:#FEF3C7;--danger:#DC2626;--danger-soft:#FEE2E2;--info:#2563EB;--info-soft:#DBEAFE;--t1:#0A0A0A;--t2:#4B5563;--t3:#9CA3AF;--font:'Plus Jakarta Sans',system-ui,sans-serif;--sw:240px;--r:14px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+/* Sidebar */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:var(--primary);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.s-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.s-logo a{font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-.02em}
+.s-logo span{color:var(--accent)}
+.s-logo small{display:block;font-size:.65rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.nav-sec{padding:14px 12px 6px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 8px;border-radius:10px;color:rgba(255,255,255,.5);font-weight:500;font-size:.85rem;transition:all .15s;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-item svg{flex-shrink:0;width:18px;height:18px}
+.nav-badge{margin-left:auto;background:rgba(255,255,255,.15);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px}
+.nav-item.active .nav-badge{background:rgba(255,255,255,.25)}
+.s-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.08)}
+.s-user{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,.06);border-radius:10px}
+.s-avatar{width:34px;height:34px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0}
+.s-name{font-size:.8rem;font-weight:600;color:#fff}
+.s-role{font-size:.68rem;color:rgba(255,255,255,.35)}
+/* Main */
+.main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-size:.95rem;font-weight:700}
+.topbar-r{display:flex;align-items:center;gap:10px}
+.period-tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:2px}
+.ptab{padding:5px 12px;border-radius:7px;font-size:.75rem;font-weight:600;color:var(--t3);cursor:pointer;border:none;background:none;transition:all .15s}
+.ptab.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.btn-icon{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);transition:all .15s;position:relative}
+.btn-icon:hover{border-color:var(--t3)}
+.notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--accent);border-radius:50%;border:2px solid #fff}
+/* Content */
+.content{padding:22px 24px;flex:1}
+/* Setup Banner */
+.setup-banner{background:linear-gradient(135deg,var(--primary),#1F2937);border-radius:var(--r);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;animation:fadeUp .4s ease both}
+.setup-banner h3{color:#fff;font-size:.95rem;margin-bottom:3px}
+.setup-banner p{color:rgba(255,255,255,.55);font-size:.8rem}
+.btn-accent{background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:9px;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-accent:hover{background:#D4541A;transform:translateY(-1px)}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface);border-radius:var(--r);padding:18px;border:1px solid var(--border);animation:fadeUp .4s ease both}
+.stat-card:nth-child(1){animation-delay:.05s}
+.stat-card:nth-child(2){animation-delay:.1s}
+.stat-card:nth-child(3){animation-delay:.15s}
+.stat-card:nth-child(4){animation-delay:.2s}
+.stat-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.stat-chg{font-size:.72rem;font-weight:600;padding:3px 8px;border-radius:20px}
+.chg-up{background:var(--success-soft);color:var(--success)}
+.chg-down{background:var(--danger-soft);color:var(--danger)}
+.chg-neu{background:var(--bg);color:var(--t3)}
+.stat-val{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:3px}
+.stat-lbl{font-size:.78rem;color:var(--t3);font-weight:500}
+.stat-sub{font-size:.72rem;color:var(--t3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+/* Skeleton */
+.sk{background:linear-gradient(90deg,#f0f2f5 25%,#e8eaed 50%,#f0f2f5 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* Charts */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px}
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;animation:fadeUp .4s ease .25s both}
+.card-head{padding:16px 18px 0;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:.88rem;font-weight:700}
+.card-sub{font-size:.73rem;color:var(--t3);margin-top:2px}
+.card-body{padding:0 18px 18px}
+.chart-wrap{position:relative;height:210px}
+/* Bottom */
+.bottom-row{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+/* Table */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:9px 14px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:11px 14px;font-size:.82rem;border-bottom:1px solid var(--border);color:var(--t2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
+.ord-num{font-weight:700;color:var(--t1);font-size:.8rem}
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.b-success{background:var(--success-soft);color:var(--success)}
+.b-warning{background:var(--warning-soft);color:var(--warning)}
+.b-info{background:var(--info-soft);color:var(--info)}
+.b-danger{background:var(--danger-soft);color:var(--danger)}
+.b-gray{background:var(--bg);color:var(--t3)}
+/* Top Products */
+.prod-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.prod-row:last-child{border-bottom:none}
+.prod-rank{width:22px;height:22px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--t3);flex-shrink:0}
+.prod-rank.gold{background:#FEF3C7;color:var(--warning)}
+.prod-img{width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--bg);flex-shrink:0}
+.prod-info{flex:1;min-width:0}
+.prod-name{font-weight:600;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-sales{font-size:.72rem;color:var(--t3)}
+.prod-rev{font-weight:700;font-size:.82rem;white-space:nowrap}
+/* Quick Actions */
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;animation:fadeUp .4s ease .1s both}
+.qa-btn{display:flex;align-items:center;gap:10px;padding:13px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;color:var(--t1);font-weight:600;font-size:.82rem}
+.qa-btn:hover{border-color:var(--accent);background:var(--accent-soft)}
+.qa-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* Mobile */
+.mob-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;width:36px;height:36px;background:var(--primary);border-radius:10px;border:none;cursor:pointer;align-items:center;justify-content:center;color:#fff}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.bottom-row{grid-template-columns:1fr}.qa-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.overlay.open{display:block}.mob-toggle{display:flex}.main{margin-left:0}.topbar{padding:0 14px 0 56px}.content{padding:14px}.period-tabs{display:none}}
+</style>
+</head>
+<body>
+
+<button class="mob-toggle" onclick="toggleSidebar()">
+  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo">
+    <a href="../index.html">Online<span>Stores</span> TZ</a>
+    <small>Admin Dashboard</small>
+  </div>
+
+  <div class="nav-sec">Muhtasari</div>
+  <a href="index.html" class="nav-item active">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="orders.html" class="nav-item">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M8 12h8"/></svg>
+    Oda <span class="nav-badge" id="pendingBadge">0</span>
+  </a>
+
+  <div class="nav-sec">Bidhaa</div>
+  <a href="products.html" class="nav-item">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+    Bidhaa zangu
+  </a>
+
+  <div class="nav-sec">Biashara</div>
+  <a href="store-settings.html" class="nav-item">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 005 19.07M4.93 4.93A10 10 0 0019 19.07"/></svg>
+    Mipangilio
+  </a>
+  <a href="../index.html" class="nav-item">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    Duka langu
+  </a>
+
+  <div class="s-bottom">
+    <div class="s-user">
+      <div class="s-avatar" id="sAvatar">S</div>
+      <div>
+        <div class="s-name" id="sName">Inapakia...</div>
+        <div class="s-role">Muuzaji</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">Dashboard</div>
+    <div class="topbar-r">
+      <div class="period-tabs">
+        <button class="ptab active" onclick="setPeriod(7,this)">Wiki</button>
+        <button class="ptab" onclick="setPeriod(30,this)">Mwezi</button>
+        <button class="ptab" onclick="setPeriod(90,this)">Miezi 3</button>
+      </div>
+      <button class="btn-icon" onclick="location.reload()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      </button>
+      <button class="btn-icon" id="notifBtn">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="btn-accent btn-sm" onclick="location.href='products.html?new=1'" style="padding:7px 14px">+ Bidhaa</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Setup Banner (inaonyeshwa kama hakuna biashara) -->
+    <div class="setup-banner" id="setupBanner" style="display:none">
+      <div>
+        <h3>🏪 Unda Biashara Yako</h3>
+        <p>Kabla ya kuuza, weka maelezo ya biashara yako kwanza</p>
+      </div>
+      <button class="btn-accent" onclick="location.href='store-settings.html'">Anza Sasa →</button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="qa-grid">
+      <a href="products.html?new=1" class="qa-btn">
+        <div class="qa-icon" style="background:var(--accent-soft)">
+          <svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        Ongeza Bidhaa
+      </a>
+      <a href="orders.html" class="qa-btn">
+        <div class="qa-icon" style="background:var(--info-soft)">
+          <svg width="16" height="16" fill="none" stroke="var(--info)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M8 12h8"/></svg>
+        </div>
+        Angalia Oda
+      </a>
+      <a href="../index.html" class="qa-btn">
+        <div class="qa-icon" style="background:var(--success-soft)">
+          <svg width="16" height="16" fill="none" stroke="var(--success)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        </div>
+        Duka Langu
+      </a>
+      <a href="store-settings.html" class="qa-btn">
+        <div class="qa-icon" style="background:#F3F4F6)">
+          <svg width="16" height="16" fill="none" stroke="var(--t2)" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 005 19.07M4.93 4.93A10 10 0 0019 19.07"/></svg>
+        </div>
+        Mipangilio
+      </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="sk" style="height:38px;width:38px;border-radius:10px;margin-bottom:12px"></div><div class="sk" style="height:28px;width:70%;margin-bottom:6px"></div><div class="sk" style="height:14px;width:40%"></div></div>
+      <div class="stat-card"><div class="sk" style="height:38px;width:38px;border-radius:10px;margin-bottom:12px"></div><div class="sk" style="height:28px;width:70%;margin-bottom:6px"></div><div class="sk" style="height:14px;width:40%"></div></div>
+      <div class="stat-card"><div class="sk" style="height:38px;width:38px;border-radius:10px;margin-bottom:12px"></div><div class="sk" style="height:28px;width:70%;margin-bottom:6px"></div><div class="sk" style="height:14px;width:40%"></div></div>
+      <div class="stat-card"><div class="sk" style="height:38px;width:38px;border-radius:10px;margin-bottom:12px"></div><div class="sk" style="height:28px;width:70%;margin-bottom:6px"></div><div class="sk" style="height:14px;width:40%"></div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Mauzo kwa Siku</div><div class="card-sub">Mapato ya kipindi kilichochaguliwa</div></div>
+        </div>
+        <div class="card-body"><div class="chart-wrap"><canvas id="salesChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Hali ya Oda</div><div class="card-sub">Mgawanyo wa oda</div></div>
+        </div>
+        <div class="card-body"><div class="chart-wrap"><canvas id="ordersChart"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-row">
+      <!-- Recent Orders -->
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Oda za Hivi Karibuni</div></div>
+          <a href="orders.html" style="font-size:.78rem;color:var(--accent);font-weight:600">Ona zote →</a>
+        </div>
+        <div class="card-body" style="padding-top:0">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Namba</th><th>Mteja</th><th>Jumla</th><th>Hali</th></tr></thead>
+              <tbody id="recentOrdersBody">
+                <tr><td colspan="4" style="text-align:center;color:var(--t3);padding:24px">Inapakia...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Products -->
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Bidhaa Zinazouza</div></div>
+          <a href="products.html" style="font-size:.78rem;color:var(--accent);font-weight:600">Zote →</a>
+        </div>
+        <div class="card-body" style="padding-top:0">
+          <div id="topProductsList"><div style="text-align:center;color:var(--t3);padding:24px;font-size:.82rem">Inapakia...</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = 'https://ost-tz.onrender.com/api';
+let storeId = null;
+let salesChart, ordersChart;
+let currentPeriod = 7;
+
+// Auth check
+const token = localStorage.getItem('ost_token');
+const user = JSON.parse(localStorage.getItem('ost_user') || 'null');
+if (!token || !user || (user.role !== 'merchant' && user.role !== 'admin')) {
+  location.href = '../index.html';
+}
+
+// Set user info
+document.getElementById('sName').textContent = user?.name?.split(' ')[0] || 'Muuzaji';
+document.getElementById('sAvatar').textContent = (user?.name || 'M')[0].toUpperCase();
+
+async function api(endpoint, opts = {}) {
+  const r = await fetch(API + endpoint, {
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    ...opts
+  });
+  return r.json();
+}
+
+function fmt(n) {
+  return new Intl.NumberFormat('sw-TZ', { style: 'currency', currency: 'TZS', minimumFractionDigits: 0 }).format(n || 0);
+}
+
+function statusBadge(s) {
+  const m = { pending:'b-warning|Inasubiri', confirmed:'b-info|Imekubaliwa', processing:'b-info|Inafungashwa', shipped:'b-info|Imesafirishwa', out_for_delivery:'b-info|Njiani', delivered:'b-success|Imefikishwa', cancelled:'b-danger|Imefutwa' };
+  const [cls, lbl] = (m[s] || 'b-gray|'+s).split('|');
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+async function loadDashboard() {
+  try {
+    const storeData = await api('/stores/owner/my-store');
+    if (!storeData.success) { document.getElementById('setupBanner').style.display = 'flex'; renderEmptyStats(); return; }
+
+    storeId = storeData.store._id;
+    await Promise.all([loadStats(), loadCharts(), loadRecentOrders(), loadTopProducts()]);
+  } catch(e) { renderEmptyStats(); }
+}
+
+function renderEmptyStats() {
+  document.getElementById('statsGrid').innerHTML = renderStatCard('TZS 0', 'Mapato', '#FFF3ED', '#E8621A', '💰', '↑ 0%', 'chg-neu', 'Kipindi hiki') +
+    renderStatCard('0', 'Oda Zote', '#DBEAFE', '#2563EB', '📦', '0 mpya', 'chg-neu', 'Zinasubiri: 0') +
+    renderStatCard('0', 'Bidhaa', '#DCFCE7', '#16A34A', '🛍️', 'Hai', 'chg-neu', 'Ongeza bidhaa') +
+    renderStatCard('0', 'Wageni', '#F3F4F6', '#4B5563', '👥', '--', 'chg-neu', 'Leo');
+}
+
+function renderStatCard(val, lbl, bg, color, icon, chg, chgCls, sub) {
+  return `<div class="stat-card">
+    <div class="stat-head">
+      <div class="stat-icon" style="background:${bg};font-size:1.1rem">${icon}</div>
+      <span class="stat-chg ${chgCls}">${chg}</span>
+    </div>
+    <div class="stat-val">${val}</div>
+    <div class="stat-lbl">${lbl}</div>
+    <div class="stat-sub">${sub}</div>
+  </div>`;
+}
+
+async function loadStats() {
+  try {
+    const data = await api(`/analytics/${storeId}/overview?period=${currentPeriod}`);
+    if (!data.success) return;
+    const { overview, recentOrders } = data;
+
+    const pending = recentOrders?.filter(o => o.status === 'pending').length || 0;
+    document.getElementById('pendingBadge').textContent = pending;
+    if (pending > 0) document.getElementById('notifBtn').querySelector('.notif-dot').style.display = 'block';
+
+    document.getElementById('statsGrid').innerHTML =
+      renderStatCard(fmt(overview.totalRevenue), 'Mapato', '#FFF3ED', '#E8621A', '💰', `${overview.completedOrders} zilizokamilika`, 'chg-up', `Kipindi: siku ${currentPeriod}`) +
+      renderStatCard(overview.totalOrders, 'Oda Zote', '#DBEAFE', '#2563EB', '📦', `${pending} zinasubiri`, pending > 0 ? 'chg-down' : 'chg-neu', `Zilizofutwa: ${overview.cancelledOrders}`) +
+      renderStatCard(overview.totalOrders > 0 ? Math.round((overview.completedOrders/overview.totalOrders)*100)+'%' : '0%', 'Kiwango cha Kukamilika', '#DCFCE7', '#16A34A', '✅', 'Oda zilizofika', 'chg-up', `Jumla: ${overview.totalOrders}`) +
+      renderStatCard(overview.totalOrders, 'Shughuli', '#F3F4F6', '#4B5563', '📊', 'siku '+currentPeriod, 'chg-neu', 'Kumbukumbu za mwisho');
+
+    return data;
+  } catch(e) {}
+}
+
+async function loadCharts() {
+  try {
+    const data = await api(`/analytics/${storeId}/overview?period=${currentPeriod}`);
+    if (!data.success) return;
+
+    const days = data.salesByDay || [];
+    const labels = days.map(d => {
+      const dt = new Date(d.date);
+      return dt.toLocaleDateString('sw-TZ', { month:'short', day:'numeric' });
+    });
+    const revenues = days.map(d => d.revenue || 0);
+    const orderCounts = days.map(d => d.orders || 0);
+
+    // Sales chart
+    const sCtx = document.getElementById('salesChart').getContext('2d');
+    if (salesChart) salesChart.destroy();
+    salesChart = new Chart(sCtx, {
+      type: 'line',
+      data: {
+        labels: labels.length ? labels : ['Hakuna data'],
+        datasets: [{
+          label: 'Mapato (TZS)',
+          data: revenues.length ? revenues : [0],
+          borderColor: '#E8621A',
+          backgroundColor: 'rgba(232,98,26,0.08)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: '#E8621A'
+        }, {
+          label: 'Oda',
+          data: orderCounts.length ? orderCounts : [0],
+          borderColor: '#2563EB',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          tension: 0.4,
+          pointRadius: 3,
+          yAxisID: 'y2'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: true, position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+          y: { grid: { color: '#F4F6F9' }, ticks: { font: { size: 11 }, callback: v => 'TZS '+v.toLocaleString() } },
+          y2: { position: 'right', grid: { display: false }, ticks: { font: { size: 11 } } }
+        }
+      }
+    });
+
+    // Orders donut chart
+    const { overview } = data;
+    const oCtx = document.getElementById('ordersChart').getContext('2d');
+    if (ordersChart) ordersChart.destroy();
+    const completed = overview.completedOrders || 0;
+    const cancelled = overview.cancelledOrders || 0;
+    const active = (overview.totalOrders || 0) - completed - cancelled;
+
+    ordersChart = new Chart(oCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Zilizokamilika', 'Zinazoendelea', 'Zilizofutwa'],
+        datasets: [{ data: [completed || 0, active || 0, cancelled || 0], backgroundColor: ['#16A34A','#2563EB','#DC2626'], borderWidth: 0, hoverOffset: 4 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 10, padding: 12 } }
+        }
+      }
+    });
+  } catch(e) {}
+}
+
+async function loadRecentOrders() {
+  try {
+    const data = await api(`/orders/store/${storeId}?limit=6`);
+    if (!data.success || !data.orders.length) {
+      document.getElementById('recentOrdersBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--t3);padding:20px;font-size:.82rem">Bado hakuna oda</td></tr>';
+      return;
+    }
+    document.getElementById('recentOrdersBody').innerHTML = data.orders.map(o => `
+      <tr onclick="location.href='orders.html?id=${o._id}'" style="cursor:pointer">
+        <td><span class="ord-num">#${o.orderNumber}</span></td>
+        <td>${o.customerInfo?.name || o.buyer?.name || 'Mgeni'}</td>
+        <td style="font-weight:600">${fmt(o.pricing?.total)}</td>
+        <td>${statusBadge(o.status)}</td>
+      </tr>`).join('');
+  } catch(e) {}
+}
+
+async function loadTopProducts() {
+  try {
+    const data = await api(`/products?store=${storeId}&sort=popular&limit=5`);
+    if (!data.success || !data.products.length) {
+      document.getElementById('topProductsList').innerHTML = '<div style="text-align:center;color:var(--t3);padding:20px;font-size:.82rem">Bado hakuna bidhaa</div>';
+      return;
+    }
+    document.getElementById('topProductsList').innerHTML = data.products.map((p, i) => `
+      <div class="prod-row">
+        <div class="prod-rank ${i===0?'gold'}">${i+1}</div>
+        <img class="prod-img" src="${p.media?.[0]?.url || '../assets/icons/product.svg'}" onerror="this.src='../assets/icons/product.svg'">
+        <div class="prod-info">
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-sales">${p.stats?.purchases || 0} mauzo</div>
+        </div>
+        <div class="prod-rev">${fmt(p.price?.original)}</div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function setPeriod(days, btn) {
+  currentPeriod = days;
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  await Promise.all([loadStats(), loadCharts()]);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oda — OST Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F6F9;--surface:#fff;--border:#E8ECF0;--primary:#0A0A0A;--accent:#E8621A;--accent-soft:#FFF3ED;--success:#16A34A;--success-soft:#DCFCE7;--warning:#D97706;--warning-soft:#FEF3C7;--danger:#DC2626;--danger-soft:#FEE2E2;--info:#2563EB;--info-soft:#DBEAFE;--t1:#0A0A0A;--t2:#4B5563;--t3:#9CA3AF;--font:'Plus Jakarta Sans',system-ui,sans-serif;--sw:240px;--r:14px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:var(--primary);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.s-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.s-logo a{font-size:1.15rem;font-weight:800;color:#fff}
+.s-logo span{color:var(--accent)}
+.s-logo small{display:block;font-size:.65rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.nav-sec{padding:14px 12px 6px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 8px;border-radius:10px;color:rgba(255,255,255,.5);font-weight:500;font-size:.85rem;transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-item svg{flex-shrink:0;width:18px;height:18px}
+.nav-badge{margin-left:auto;background:rgba(255,255,255,.15);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px}
+.s-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.08)}
+.s-user{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,.06);border-radius:10px}
+.s-avatar{width:34px;height:34px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.85rem;flex-shrink:0}
+.s-name{font-size:.8rem;font-weight:600;color:#fff}
+.s-role{font-size:.68rem;color:rgba(255,255,255,.35)}
+.main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-size:.95rem;font-weight:700}
+.topbar-r{display:flex;align-items:center;gap:10px}
+.content{padding:22px 24px;flex:1}
+/* Status tabs */
+.status-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:18px;padding-bottom:2px}
+.status-tabs::-webkit-scrollbar{display:none}
+.stab{padding:7px 16px;border-radius:10px;font-size:.8rem;font-weight:600;color:var(--t3);cursor:pointer;border:1.5px solid transparent;background:var(--surface);white-space:nowrap;transition:all .15s}
+.stab:hover{border-color:var(--border);color:var(--t2)}
+.stab.active{border-color:var(--primary);color:var(--t1);background:var(--surface)}
+.stab .cnt{margin-left:6px;background:var(--bg);color:var(--t3);font-size:.68rem;padding:1px 6px;border-radius:20px}
+.stab.active .cnt{background:var(--primary);color:#fff}
+/* Toolbar */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;flex:1;max-width:280px;transition:all .15s}
+.search-box:focus-within{border-color:var(--primary)}
+.search-box input{border:none;outline:none;font-size:.83rem;width:100%;font-family:var(--font)}
+.filter-sel{padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-family:var(--font);color:var(--t2);background:var(--surface);outline:none;cursor:pointer}
+.filter-sel:focus{border-color:var(--primary)}
+.results-count{font-size:.78rem;color:var(--t3);margin-left:auto}
+/* Table Card */
+.table-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg)}
+td{padding:13px 16px;font-size:.83rem;border-bottom:1px solid var(--border);color:var(--t2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
+.ord-num{font-weight:700;color:var(--t1);font-size:.82rem}
+.cust-name{font-weight:600;color:var(--t1);font-size:.83rem}
+.cust-phone{font-size:.75rem;color:var(--t3)}
+.order-amount{font-weight:700;font-size:.88rem;color:var(--t1)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.b-success{background:var(--success-soft);color:var(--success)}
+.b-warning{background:var(--warning-soft);color:var(--warning)}
+.b-info{background:var(--info-soft);color:var(--info)}
+.b-danger{background:var(--danger-soft);color:var(--danger)}
+.b-gray{background:var(--bg);color:var(--t3)}
+.b-accent{background:var(--accent-soft);color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:9px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;border:none;font-family:var(--font)}
+.btn-outline{background:var(--surface);color:var(--t1);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--t3)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-sm{padding:4px 10px;font-size:.73rem}
+/* Empty */
+.empty-state{text-align:center;padding:50px 24px;color:var(--t3)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px}
+.empty-state h3{font-size:.95rem;color:var(--t2);margin-bottom:6px;font-family:var(--font)}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.active{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:20px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;transform:scale(.96) translateY(16px);transition:transform .2s}
+.modal-overlay.active .modal{transform:scale(1) translateY(0)}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-size:.95rem;font-weight:700}
+.modal-body{padding:20px 22px}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+/* Order Detail */
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.83rem}
+.detail-row:last-child{border-bottom:none}
+.detail-label{color:var(--t3);font-weight:500}
+.detail-val{font-weight:600;color:var(--t1);text-align:right}
+.tracking-step{display:flex;gap:12px;padding-bottom:16px;position:relative}
+.tracking-step::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--border)}
+.tracking-step:last-child::before{display:none}
+.tracking-step.done::before{background:var(--success)}
+.t-dot{width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;font-size:.75rem}
+.tracking-step.done .t-dot{background:var(--success);color:#fff}
+.tracking-step.current .t-dot{background:var(--accent);color:#fff}
+.t-info{flex:1}
+.t-status{font-weight:600;font-size:.83rem}
+.t-msg{font-size:.78rem;color:var(--t3)}
+.t-time{font-size:.73rem;color:var(--t3);margin-top:2px}
+/* Status update select */
+.status-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface)}
+.status-select:focus{border-color:var(--primary)}
+/* Stats strip */
+.stats-strip{display:flex;gap:12px;margin-bottom:18px}
+.strip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;flex:1;text-align:center}
+.strip-val{font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.strip-lbl{font-size:.72rem;color:var(--t3);font-weight:500}
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--border);font-size:.8rem;color:var(--t3)}
+.page-btns{display:flex;gap:6px}
+.page-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:.8rem;font-weight:600;color:var(--t2);display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:var(--font)}
+.page-btn:hover{border-color:var(--t1)}
+.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.mob-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;width:36px;height:36px;background:var(--primary);border-radius:10px;border:none;cursor:pointer;align-items:center;justify-content:center;color:#fff}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.overlay.open{display:block}.mob-toggle{display:flex}.main{margin-left:0}.topbar{padding:0 14px 0 56px}.content{padding:14px}.stats-strip{flex-wrap:wrap}.search-box{max-width:100%}}
+</style>
+</head>
+<body>
+
+<button class="mob-toggle" onclick="toggleSidebar()">
+  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo"><a href="../index.html">Online<span>Stores</span> TZ</a><small>Admin Panel</small></div>
+  <div class="nav-sec">Muhtasari</div>
+  <a href="index.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  <a href="orders.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M8 12h8"/></svg>Oda <span class="nav-badge" id="pendingBadge">0</span></a>
+  <div class="nav-sec">Bidhaa</div>
+  <a href="products.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Bidhaa zangu</a>
+  <div class="nav-sec">Biashara</div>
+  <a href="../index.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Duka Langu</a>
+  <div class="s-bottom">
+    <div class="s-user">
+      <div class="s-avatar" id="sAvatar">S</div>
+      <div><div class="s-name" id="sName">Muuzaji</div><div class="s-role">Merchant</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">Oda Zangu</div>
+    <div class="topbar-r">
+      <button onclick="loadOrders()" class="btn btn-outline btn-sm">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-strip">
+      <div class="strip-card"><div class="strip-val" id="totalOrd">—</div><div class="strip-lbl">Oda Zote</div></div>
+      <div class="strip-card"><div class="strip-val" style="color:var(--warning)" id="pendingOrd">—</div><div class="strip-lbl">Zinasubiri</div></div>
+      <div class="strip-card"><div class="strip-val" style="color:var(--info)" id="activeOrd">—</div><div class="strip-lbl">Zinazoendelea</div></div>
+      <div class="strip-card"><div class="strip-val" style="color:var(--success)" id="completedOrd">—</div><div class="strip-lbl">Zilizokamilika</div></div>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="status-tabs" id="statusTabs">
+      <button class="stab active" data-status="" onclick="setStatus('',this)">Zote <span class="cnt" id="cnt-all">0</span></button>
+      <button class="stab" data-status="pending" onclick="setStatus('pending',this)">Zinasubiri <span class="cnt" id="cnt-pending">0</span></button>
+      <button class="stab" data-status="confirmed" onclick="setStatus('confirmed',this)">Zilizokubaliwa <span class="cnt" id="cnt-confirmed">0</span></button>
+      <button class="stab" data-status="processing" onclick="setStatus('processing',this)">Zinafungashwa <span class="cnt" id="cnt-processing">0</span></button>
+      <button class="stab" data-status="shipped" onclick="setStatus('shipped',this)">Zimesafirishwa <span class="cnt" id="cnt-shipped">0</span></button>
+      <button class="stab" data-status="delivered" onclick="setStatus('delivered',this)">Zilizofika <span class="cnt" id="cnt-delivered">0</span></button>
+      <button class="stab" data-status="cancelled" onclick="setStatus('cancelled',this)">Zilizofutwa <span class="cnt" id="cnt-cancelled">0</span></button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Tafuta namba au jina la mteja..." oninput="filterOrders()">
+      </div>
+      <select class="filter-sel" id="sortFilter" onchange="filterOrders()">
+        <option value="-createdAt">Mpya Kwanza</option>
+        <option value="createdAt">Zamani Kwanza</option>
+        <option value="-total">Jumla — Juu</option>
+      </select>
+      <span class="results-count" id="resultsCount"></span>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Namba ya Oda</th>
+              <th>Mteja</th>
+              <th>Bidhaa</th>
+              <th>Jumla</th>
+              <th>Malipo</th>
+              <th>Hali</th>
+              <th>Tarehe</th>
+              <th>Hatua</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr><td colspan="8" style="text-align:center;padding:30px;color:var(--t3)">Inapakia...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span id="pageInfo">Inapakia...</span>
+        <div class="page-btns" id="pageBtns"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="orderModalTitle">Maelezo ya Oda</div>
+        <div style="font-size:.75rem;color:var(--t3);margin-top:2px" id="orderModalSub"></div>
+      </div>
+      <button onclick="closeOrderModal()" style="background:none;border:none;cursor:pointer;color:var(--t3)">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="orderModalBody">Inapakia...</div>
+    <div class="modal-foot">
+      <button onclick="closeOrderModal()" class="btn btn-outline">Funga</button>
+      <button onclick="updateOrderStatus()" class="btn btn-accent" id="updateStatusBtn">Sasisha Hali</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:10px"></div>
+
+<script>
+const API = 'https://ost-tz.onrender.com/api';
+const token = localStorage.getItem('ost_token');
+const user = JSON.parse(localStorage.getItem('ost_user') || 'null');
+if (!token || !user || (user.role !== 'merchant' && user.role !== 'admin')) location.href = '../index.html';
+
+document.getElementById('sName').textContent = user?.name?.split(' ')[0] || 'Muuzaji';
+document.getElementById('sAvatar').textContent = (user?.name || 'M')[0].toUpperCase();
+
+let allOrders = [], filteredOrders = [], storeId = null, currentStatus = '', currentPage = 1, currentOrderId = null;
+const PAGE_SIZE = 15;
+
+async function apiCall(endpoint, opts = {}) {
+  const r = await fetch(API + endpoint, { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, ...opts });
+  return r.json();
+}
+
+function fmt(n) { return new Intl.NumberFormat('sw-TZ', { style:'currency', currency:'TZS', minimumFractionDigits:0 }).format(n || 0); }
+function fmtDate(d) { return new Date(d).toLocaleDateString('sw-TZ', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+
+const statusMap = {
+  pending: ['b-warning','Inasubiri'],
+  confirmed: ['b-info','Imekubaliwa'],
+  processing: ['b-info','Inafungashwa'],
+  shipped: ['b-info','Imesafirishwa'],
+  out_for_delivery: ['b-accent','Iko Njiani'],
+  delivered: ['b-success','Imefikishwa'],
+  cancelled: ['b-danger','Imefutwa'],
+  refunded: ['b-gray','Imerudishiwa']
+};
+
+function statusBadge(s) {
+  const [cls, lbl] = statusMap[s] || ['b-gray', s];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+function payBadge(s) {
+  const m = { completed: ['b-success','Amelipa'], pending: ['b-warning','Hajalipa'], failed: ['b-danger','Imeshindwa'] };
+  const [cls, lbl] = m[s] || ['b-gray', s];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+async function init() {
+  const storeData = await apiCall('/stores/owner/my-store');
+  if (!storeData.success) { toast('Unda biashara kwanza', 'error'); return; }
+  storeId = storeData.store._id;
+  await loadOrders();
+}
+
+async function loadOrders() {
+  document.getElementById('ordersBody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--t3)">Inapakia...</td></tr>';
+  const data = await apiCall(`/orders/store/${storeId}?limit=200`);
+  if (!data.success) return;
+  allOrders = data.orders || [];
+  updateStats();
+  filterOrders();
+}
+
+function updateStats() {
+  const counts = { all: allOrders.length, pending: 0, confirmed: 0, processing: 0, shipped: 0, delivered: 0, cancelled: 0 };
+  allOrders.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
+
+  document.getElementById('totalOrd').textContent = counts.all;
+  document.getElementById('pendingOrd').textContent = counts.pending;
+  document.getElementById('activeOrd').textContent = counts.confirmed + counts.processing + counts.shipped;
+  document.getElementById('completedOrd').textContent = counts.delivered;
+  document.getElementById('pendingBadge').textContent = counts.pending;
+
+  Object.keys(counts).forEach(k => {
+    const el = document.getElementById(`cnt-${k}`);
+    if (el) el.textContent = counts[k];
+  });
+}
+
+function setStatus(status, btn) {
+  currentStatus = status;
+  currentPage = 1;
+  document.querySelectorAll('.stab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterOrders();
+}
+
+function filterOrders() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const sort = document.getElementById('sortFilter').value;
+
+  filteredOrders = allOrders.filter(o => {
+    const matchStatus = !currentStatus || o.status === currentStatus;
+    const matchQ = !q || o.orderNumber?.toLowerCase().includes(q) || o.customerInfo?.name?.toLowerCase().includes(q) || o.customerInfo?.phone?.includes(q);
+    return matchStatus && matchQ;
+  });
+
+  if (sort === 'createdAt') filteredOrders.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
+  else if (sort === '-total') filteredOrders.sort((a,b) => (b.pricing?.total||0) - (a.pricing?.total||0));
+  else filteredOrders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  renderOrders();
+}
+
+function renderOrders() {
+  const total = filteredOrders.length;
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageOrders = filteredOrders.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('resultsCount').textContent = `${total} oda`;
+  document.getElementById('pageInfo').textContent = `Inaonyesha ${start+1}–${Math.min(start+PAGE_SIZE,total)} kati ya ${total}`;
+
+  if (!pageOrders.length) {
+    document.getElementById('ordersBody').innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📦</div><h3>Hakuna oda</h3><p>Bado hakuna oda katika hali hii</p></div></td></tr>';
+    document.getElementById('pageBtns').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('ordersBody').innerHTML = pageOrders.map(o => `
+    <tr style="cursor:pointer" onclick="openOrderModal('${o._id}')">
+      <td><span class="ord-num">#${o.orderNumber}</span></td>
+      <td>
+        <div class="cust-name">${o.customerInfo?.name || o.buyer?.name || 'Mgeni'}</div>
+        <div class="cust-phone">${o.customerInfo?.phone || ''}</div>
+      </td>
+      <td style="font-size:.78rem">${o.items?.length || 0} bidhaa</td>
+      <td><span class="order-amount">${fmt(o.pricing?.total)}</span></td>
+      <td>${payBadge(o.payment?.status)}</td>
+      <td>${statusBadge(o.status)}</td>
+      <td style="font-size:.75rem;white-space:nowrap">${fmtDate(o.createdAt)}</td>
+      <td onclick="event.stopPropagation()">
+        <button class="btn btn-outline btn-sm" onclick="openOrderModal('${o._id}')">Angalia</button>
+      </td>
+    </tr>`).join('');
+
+  // Pagination
+  const btns = [];
+  for (let i = 1; i <= pages; i++) {
+    btns.push(`<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`);
+  }
+  document.getElementById('pageBtns').innerHTML = btns.join('');
+}
+
+function goPage(p) { currentPage = p; renderOrders(); window.scrollTo(0, 0); }
+
+async function openOrderModal(id) {
+  currentOrderId = id;
+  document.getElementById('orderModal').classList.add('active');
+  document.getElementById('orderModalBody').innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Inapakia...</div>';
+
+  const data = await apiCall(`/orders/track/${allOrders.find(o => o._id === id)?.orderNumber}`);
+  if (!data.success) return;
+  const o = data.order;
+
+  document.getElementById('orderModalTitle').textContent = `Oda #${o.orderNumber}`;
+  document.getElementById('orderModalSub').textContent = fmtDate(o.createdAt);
+
+  const statusOptions = ['pending','confirmed','processing','shipped','out_for_delivery','delivered','cancelled'];
+  const statusLabels = { pending:'Inasubiri', confirmed:'Imekubaliwa', processing:'Inafungashwa', shipped:'Imesafirishwa', out_for_delivery:'Iko Njiani', delivered:'Imefikishwa', cancelled:'Imefutwa' };
+
+  document.getElementById('orderModalBody').innerHTML = `
+    <!-- Items -->
+    <div style="margin-bottom:18px">
+      <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:10px">Bidhaa</div>
+      ${(o.items || []).map(item => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <img src="${item.image || '../assets/icons/product.svg'}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;background:var(--bg)" onerror="this.src='../assets/icons/product.svg'">
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:.83rem">${item.name}</div>
+            <div style="font-size:.73rem;color:var(--t3)">Idadi: ${item.quantity} × ${fmt(item.price)}</div>
+            ${item.selectedVariants?.length ? `<div style="font-size:.72rem;color:var(--t3)">${item.selectedVariants.map(v => v.optionLabel).join(', ')}</div>` : ''}
+          </div>
+          <div style="font-weight:700;font-size:.85rem">${fmt(item.subtotal)}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Pricing -->
+    <div style="background:var(--bg);border-radius:10px;padding:12px;margin-bottom:18px">
+      <div class="detail-row"><span class="detail-label">Jumla ya bidhaa</span><span class="detail-val">${fmt(o.pricing?.subtotal)}</span></div>
+      <div class="detail-row"><span class="detail-label">Delivery</span><span class="detail-val">${fmt(o.pricing?.deliveryFee)}</span></div>
+      <div class="detail-row" style="font-size:.9rem"><span style="font-weight:700">JUMLA YOTE</span><span style="font-weight:800;color:var(--accent)">${fmt(o.pricing?.total)}</span></div>
+    </div>
+
+    <!-- Customer Info -->
+    <div style="margin-bottom:18px">
+      <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:10px">Maelezo ya Mteja</div>
+      <div class="detail-row"><span class="detail-label">Jina</span><span class="detail-val">${o.customerInfo?.name}</span></div>
+      <div class="detail-row"><span class="detail-label">Simu</span><span class="detail-val">${o.customerInfo?.phone}</span></div>
+      <div class="detail-row"><span class="detail-label">Anwani</span><span class="detail-val">${o.customerInfo?.address}, ${o.customerInfo?.region || ''}</span></div>
+      <div class="detail-row"><span class="detail-label">Malipo</span><span class="detail-val">${o.payment?.method?.replace('_',' ').toUpperCase()}</span></div>
+      <div class="detail-row"><span class="detail-label">Hali ya Malipo</span><span class="detail-val">${payBadge(o.payment?.status)}</span></div>
+    </div>
+
+    <!-- Tracking -->
+    <div style="margin-bottom:18px">
+      <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">Historia ya Oda</div>
+      <div>
+        ${(o.tracking || []).map((t, i, arr) => `
+          <div class="tracking-step ${i < arr.length-1 ? 'done' : 'current'}">
+            <div class="t-dot">${i < arr.length-1 ? '✓' : '●'}</div>
+            <div class="t-info">
+              <div class="t-status">${statusLabels[t.status] || t.status}</div>
+              <div class="t-msg">${t.message || ''}</div>
+              <div class="t-time">${fmtDate(t.timestamp)}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Update Status -->
+    ${o.status !== 'delivered' && o.status !== 'cancelled' ? `
+    <div>
+      <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:8px">Sasisha Hali</div>
+      <select class="status-select" id="newStatusSelect">
+        ${statusOptions.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${statusLabels[s]}</option>`).join('')}
+      </select>
+      <input type="text" class="form-input" id="statusMessage" placeholder="Ujumbe kwa mteja (hiari)" style="margin-top:8px;width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.83rem;font-family:var(--font);outline:none">
+    </div>` : `<div style="text-align:center;padding:10px;background:var(--bg);border-radius:10px;font-size:.83rem;color:var(--t3)">Oda hii ${o.status === 'delivered' ? 'imefikishwa' : 'imefutwa'} — haiwezi kusasishwa</div>`}
+  `;
+
+  const updateBtn = document.getElementById('updateStatusBtn');
+  if (o.status === 'delivered' || o.status === 'cancelled') {
+    updateBtn.style.display = 'none';
+  } else {
+    updateBtn.style.display = 'inline-flex';
+  }
+}
+
+async function updateOrderStatus() {
+  const status = document.getElementById('newStatusSelect')?.value;
+  const message = document.getElementById('statusMessage')?.value;
+  if (!status || !currentOrderId) return;
+
+  const btn = document.getElementById('updateStatusBtn');
+  btn.textContent = 'Inasasisha...';
+  btn.disabled = true;
+
+  const data = await apiCall(`/orders/${currentOrderId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status, message })
+  });
+
+  if (data.success) {
+    toast('Hali ya oda imesasishwa!');
+    closeOrderModal();
+    await loadOrders();
+  } else {
+    toast(data.message || 'Hitilafu', 'error');
+  }
+
+  btn.textContent = 'Sasisha Hali';
+  btn.disabled = false;
+}
+
+function closeOrderModal() { document.getElementById('orderModal').classList.remove('active'); currentOrderId = null; }
+
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.style.cssText = `display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);font-size:.83rem;font-weight:500;min-width:260px`;
+  el.innerHTML = `<span style="font-size:1.1rem">${type === 'success' ? '✅' : '❌'}</span>${msg}`;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+// Check URL for specific order
+const orderId = new URLSearchParams(location.search).get('id');
+
+init().then(() => {
+  if (orderId) {
+    setTimeout(() => {
+      const order = allOrders.find(o => o._id === orderId);
+      if (order) openOrderModal(orderId);
+    }, 800);
+  }
+});
+</script>
+</body>
+</html>
