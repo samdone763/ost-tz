@@ -48,10 +48,10 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;color:inhe
 .s-logo-sm{width:18px;height:18px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;color:white;flex-shrink:0}
 .s-name-sm{font-size:.75rem;font-weight:600}
 .s-follow{font-size:.68rem;color:var(--accent2);font-weight:700}
-.prod-title{font-family:var(--fd);font-size:1.25rem;font-weight:700;line-height:1.2;margin-bottom:5px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.prod-title{font-family:var(--fb);font-size:1.15rem;font-weight:700;line-height:1.2;margin-bottom:5px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 .prod-desc{font-size:.8rem;color:rgba(255,255,255,.75);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
 .price-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.price{font-family:var(--fd);font-size:1.4rem;font-weight:800}
+.price{font-family:var(--fb);font-size:1.3rem;letter-spacing:-.01em;font-weight:800}
 .price-orig{font-size:.85rem;color:rgba(255,255,255,.45);text-decoration:line-through}
 .disc-badge{background:var(--accent);color:white;font-size:.65rem;font-weight:800;padding:3px 7px;border-radius:20px}
 .cta{display:flex;gap:8px}
@@ -170,7 +170,8 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;color:inhe
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
       <div class="dot" id="cartDot"></div>
     </button>
-    <button class="login-btn" id="loginBtn" onclick="openAuth()">Ingia</button>
+    <button onclick="toggleLang()" id="langBtn" style="padding:5px 10px;background:rgba(255,255,255,0.1);color:white;border-radius:20px;font-size:.7rem;font-weight:700;border:1px solid rgba(255,255,255,0.2);cursor:pointer;transition:all .2s">SW</button>
+    <button class="login-btn" id="loginBtn" onclick="openAuth()" data-sw="Ingia" data-en="Login">Ingia</button>
     <img class="nav-av" id="navAv" src="" alt="" onclick="goDash()">
   </div>
 </nav>
@@ -187,7 +188,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;color:inhe
     <div class="bi-ic"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
     <span class="bi-lbl">Nyumbani</span>
   </div>
-  <div class="bi" onclick="openSearch()">
+  <div class="bi" onclick="location.href='explore.html'">
     <div class="bi-ic"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
     <span class="bi-lbl">Gundua</span>
   </div>
@@ -498,7 +499,12 @@ async function doReg(){
 function goDash(){const u=usr();if(u?.role==='merchant'||u?.role==='admin')location.href='admin/index.html';else location.href='profile.html';}
 function goPost(){const u=usr();if(!u){openAuth();toast('⚠️ Ingia kwanza','i');return;}if(u.role!=='merchant'){toast('⚠️ Unahitaji akaunti ya muuzaji','i');return;}location.href='admin/products.html?new=1';}
 function goCart(){location.href='checkout.html';}
-function openSearch(){toast('🔍 Search — Inakuja!','i');}
+let searchOpen=false;
+function openSearch(){if(searchOpen)return;searchOpen=true;setTimeout(()=>searchOpen=false,3000);toast('🔍 Search — Inakuja!','i');}
+let lang=localStorage.getItem('ost_lang')||'sw';
+const T={sw:{forYou:'Kwako',trending:'Trending',stores:'Biashara',home:'Nyumbani',explore:'Gundua',orders:'Oda',me:'Mimi',login:'Ingia',submit:'🔒 Agiza Sasa',orderSent:'Oda Imetumwa!'},en:{forYou:'For You',trending:'Trending',stores:'Stores',home:'Home',explore:'Explore',orders:'Orders',me:'Me',login:'Login',submit:'🔒 Place Order',orderSent:'Order Placed!'}};
+function applyLang(){const t=T[lang];document.getElementById('langBtn').textContent=lang==='sw'?'EN':'SW';const tabs=document.querySelectorAll('.ntab');if(tabs[0])tabs[0].textContent=t.forYou;if(tabs[1])tabs[1].textContent=t.trending;if(tabs[2])tabs[2].textContent=t.stores;const lbls=document.querySelectorAll('.bi-lbl');['home','explore','orders','me'].forEach((k,i)=>{if(lbls[i]&&t[k])lbls[i].textContent=t[k];});const lb=document.getElementById('loginBtn');if(lb)lb.textContent=t.login;const sb=document.getElementById('subBtn');if(sb)sb.textContent=t.submit;}
+function toggleLang(){lang=lang==='sw'?'en':'sw';localStorage.setItem('ost_lang',lang);applyLang();loadFeed(curTab);}
 function scrollTop(){document.getElementById('feed').scrollTo({top:0,behavior:'smooth'});}
 function goProfile(){const u=usr();if(!u)openAuth();else goDash();}
 function goTrack(){location.href=`track.html?order=${curOrderNum}`;}
@@ -508,7 +514,7 @@ function toggleSound(btn,e){e.stopPropagation();muted=!muted;document.querySelec
 
 function toast(msg,type='i'){const el=document.createElement('div');el.className=`ti ${type==='s'?'ti-s':type==='e'?'ti-e':'ti-i'}`;el.textContent=msg;const ts=document.getElementById('ts');ts.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2200);}
 
-initAuth();updCart();loadFeed('forYou');
+applyLang();initAuth();updCart();loadFeed('forYou');
 </script>
 </body>
 </html>

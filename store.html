@@ -137,7 +137,7 @@ a{text-decoration:none;color:inherit}
     </div>
 
     <div class="products-grid" id="prodsGrid">
-      ${Array(8).fill(`<div class="prod-card"><div class="sk" style="aspect-ratio:1;width:100%"></div><div style="padding:12px"><div class="sk" style="height:14px;margin-bottom:8px"></div><div class="sk" style="height:16px;width:50%"></div></div></div>`).join('')}
+      <div id="prodsGrid" class="products-grid"></div>
     </div>
   </div>
 </div>
@@ -181,6 +181,7 @@ async function loadStore() {
 }
 
 async function loadProducts(sid) {
+  document.getElementById('prodsGrid').innerHTML = Array(6).fill('<div class="prod-card"><div class="sk" style="aspect-ratio:1;width:100%"></div><div style="padding:12px"><div class="sk" style="height:14px;margin-bottom:8px;border-radius:4px"></div><div class="sk" style="height:16px;width:50%;border-radius:4px"></div></div></div>').join('');
   const sort = document.getElementById('sortSel')?.value || '-createdAt';
   const data = await fetch(`${API}/products?store=${sid || storeId}&sort=${sort}&limit=100`).then(r => r.json());
   if (!data.success) return;
