@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pakia Bidhaa — OST</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0A0A;--ink2:#141414;--accent:#E8621A;--accent2:#FF8C42;--success:#00C853;--danger:#FF3B30;--border:rgba(255,255,255,0.1);--surface:rgba(255,255,255,0.06);--white:#fff;--fd:'Syne',sans-serif;--fb:'Instrument Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--ink);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;font-family:inherit;color:inherit}
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);z-index:100}
+.header-title{font-family:var(--fd);font-size:1rem;font-weight:700}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,0.6);background:none;padding:6px 10px;border-radius:8px;border:1px solid var(--border)}
+.back-btn:hover{color:var(--white);border-color:rgba(255,255,255,0.3)}
+/* Steps indicator */
+.steps{display:flex;padding:20px;gap:0}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.step-item::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:rgba(255,255,255,0.1);z-index:0}
+.step-item:last-child::after{display:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;z-index:1;transition:all .3s}
+.step-item.active .step-num{background:var(--accent);border-color:var(--accent)}
+.step-item.done .step-num{background:var(--success);border-color:var(--success)}
+.step-lbl{font-size:.62rem;font-weight:600;color:rgba(255,255,255,0.4);text-align:center}
+.step-item.active .step-lbl{color:var(--accent2)}
+.step-item.done .step-lbl{color:var(--success)}
+/* Content */
+.content{padding:20px;max-width:600px;margin:0 auto}
+/* Upload zone */
+.upload-zone{border:2px dashed rgba(255,255,255,0.15);border-radius:20px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;margin-bottom:20px}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent2);background:rgba(232,98,26,0.05)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:2.5rem;margin-bottom:12px}
+.upload-title{font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:6px}
+.upload-sub{font-size:.8rem;color:rgba(255,255,255,0.45);margin-bottom:14px}
+.upload-types{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.type-chip{padding:4px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;font-size:.7rem;font-weight:600;color:rgba(255,255,255,0.5)}
+/* Preview grid */
+.preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.preview-item{aspect-ratio:1;border-radius:12px;overflow:hidden;position:relative;background:rgba(255,255,255,0.06);border:1px solid var(--border)}
+.preview-item img,.preview-item video{width:100%;height:100%;object-fit:cover}
+.preview-remove{position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.7rem;border:none;color:white}
+.preview-primary{position:absolute;bottom:6px;left:6px;background:var(--accent);color:white;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px}
+.preview-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:none;border:2px dashed rgba(255,255,255,0.12);width:100%;height:100%;border-radius:12px;aspect-ratio:1;transition:all .2s}
+.preview-add:hover{border-color:var(--accent2);background:rgba(232,98,26,0.06)}
+/* Upload progress */
+.upload-progress{margin-bottom:20px}
+.up-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border-radius:12px;margin-bottom:8px;border:1px solid var(--border)}
+.up-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.06)}
+.up-info{flex:1;min-width:0}
+.up-name{font-size:.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up-size{font-size:.7rem;color:rgba(255,255,255,0.4)}
+.up-bar-wrap{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:6px;overflow:hidden}
+.up-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .3s}
+.up-status{font-size:.72rem;font-weight:700;white-space:nowrap;flex-shrink:0}
+.up-status.done{color:var(--success)}
+.up-status.error{color:var(--danger)}
+.up-status.uploading{color:var(--accent2)}
+/* Form */
+.form-section{margin-bottom:24px}
+.section-title{font-family:var(--fd);font-size:.85rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title span{font-size:1rem}
+.form-group{margin-bottom:14px}
+.form-label{font-size:.75rem;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:.88rem;font-family:var(--fb);color:var(--white);outline:none;transition:all .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent2);background:rgba(255,255,255,0.08)}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(255,255,255,0.2)}
+.form-select{appearance:none;cursor:pointer}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* Price group */
+.price-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.price-hint{font-size:.72rem;color:rgba(255,255,255,0.3);margin-top:4px}
+/* Variant builder */
+.variant-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.variant-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.variant-name-input{flex:1;padding:8px 12px;background:rgba(255,255,255,0.06);border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-family:var(--fb);color:var(--white);outline:none}
+.variant-name-input:focus{border-color:var(--accent2)}
+.variant-name-input::placeholder{color:rgba(255,255,255,0.2)}
+.del-btn{width:30px;height:30px;background:rgba(255,59,48,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--danger);font-size:.8rem;border:none;flex-shrink:0;transition:all .2s}
+.del-btn:hover{background:rgba(255,59,48,0.3)}
+.variant-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;min-height:32px}
+.v-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:rgba(255,255,255,0.1);border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer}
+.v-chip .remove{color:rgba(255,255,255,0.4);font-size:.7rem;cursor:pointer}
+.v-chip .remove:hover{color:var(--danger)}
+.add-option-row{display:flex;gap:8px}
+.add-option-input{flex:1;padding:7px 10px;background:rgba(255,255,255,0.06);border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;font-family:var(--fb);color:var(--white);outline:none}
+.add-option-input:focus{border-color:var(--accent2)}
+.add-option-input::placeholder{color:rgba(255,255,255,0.2)}
+.add-opt-btn{padding:7px 12px;background:rgba(255,255,255,0.08);border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid var(--border);color:var(--white)}
+.add-opt-btn:hover{background:rgba(255,255,255,0.14)}
+.add-variant-btn{display:flex;align-items:center;gap:6px;padding:10px 14px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--border);border-radius:12px;font-size:.82rem;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.5);width:100%;justify-content:center;transition:all .2s;margin-top:4px}
+.add-variant-btn:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(232,98,26,0.05)}
+/* Tags */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.tag-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,0.08);border-radius:20px;font-size:.75rem;font-weight:600}
+.tag-chip .remove{color:rgba(255,255,255,0.3);cursor:pointer;font-size:.7rem}
+.tag-chip .remove:hover{color:var(--danger)}
+/* Toggle */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info .toggle-label{font-size:.85rem;font-weight:600}
+.toggle-info .toggle-desc{font-size:.72rem;color:rgba(255,255,255,0.4);margin-top:2px}
+.toggle{width:44px;height:24px;background:rgba(255,255,255,0.15);border-radius:12px;cursor:pointer;position:relative;transition:all .3s;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:all .3s;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.toggle.on::after{left:23px}
+/* Submit */
+.submit-section{padding:20px;border-top:1px solid var(--border);position:sticky;bottom:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px)}
+.submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-radius:14px;font-size:.95rem;font-weight:800;font-family:var(--fd);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(232,98,26,0.35);border:none}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,98,26,0.45)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+/* Toast */
+.toast-stack{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:8px;width:calc(100% - 32px);max-width:360px}
+.toast-item{padding:10px 14px;border-radius:11px;font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:7px;backdrop-filter:blur(12px);animation:ti .3s ease}
+@keyframes ti{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.t-s{background:rgba(0,200,83,.18);border:1px solid rgba(0,200,83,.28);color:#00E676}
+.t-e{background:rgba(255,59,48,.18);border:1px solid rgba(255,59,48,.28);color:#FF6B6B}
+.t-i{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:white}
+/* Success screen */
+.success-screen{text-align:center;padding:60px 20px;display:none}
+.success-screen.show{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.s-emoji{font-size:4rem;margin-bottom:16px}
+.s-title{font-family:var(--fd);font-size:1.5rem;font-weight:800;margin-bottom:8px}
+.s-sub{font-size:.85rem;color:rgba(255,255,255,0.5);margin-bottom:24px}
+.s-btns{display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto}
+.s-btn-primary{padding:13px;background:var(--accent);border-radius:12px;font-weight:700;font-family:var(--fd);font-size:.88rem;cursor:pointer;border:none;color:white}
+.s-btn-outline{padding:13px;background:rgba(255,255,255,0.08);border-radius:12px;font-weight:600;font-size:.85rem;cursor:pointer;border:1px solid rgba(255,255,255,0.12);color:white}
+/* Cloudinary widget fallback */
+.cloudinary-note{background:rgba(255,140,66,0.1);border:1px solid rgba(255,140,66,0.2);border-radius:10px;padding:12px 14px;font-size:.78rem;color:rgba(255,255,255,0.6);margin-bottom:16px;display:flex;gap:8px}
+@media(max-width:480px){.form-row,.price-group{grid-template-columns:1fr}.preview-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <button class="back-btn" onclick="history.back()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Rudi
+  </button>
+  <div class="header-title" id="pageTitle">📦 Weka Bidhaa Mpya</div>
+  <div style="width:60px"></div>
+</div>
+
+<!-- Steps -->
+<div class="steps">
+  <div class="step-item active" id="step1">
+    <div class="step-num">1</div>
+    <div class="step-lbl">Picha</div>
+  </div>
+  <div class="step-item" id="step2">
+    <div class="step-num">2</div>
+    <div class="step-lbl">Maelezo</div>
+  </div>
+  <div class="step-item" id="step3">
+    <div class="step-num">3</div>
+    <div class="step-lbl">Bei</div>
+  </div>
+  <div class="step-item" id="step4">
+    <div class="step-num">4</div>
+    <div class="step-lbl">Chapisha</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- STEP 1: Media Upload -->
+  <div id="stepContent1">
+    <div class="cloudinary-note">
+      ℹ️ Picha zinapakiwa moja kwa moja kwenye Cloudinary — salama na haraka
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="mediaInput" accept="image/*,video/*" multiple onchange="handleFiles(this.files)">
+      <div class="upload-icon">📸</div>
+      <div class="upload-title">Pakia Picha au Video</div>
+      <div class="upload-sub">Bonyeza hapa au drag & drop faili zako</div>
+      <div class="upload-types">
+        <span class="type-chip">JPG</span>
+        <span class="type-chip">PNG</span>
+        <span class="type-chip">WEBP</span>
+        <span class="type-chip">MP4</span>
+        <span class="type-chip">MOV</span>
+      </div>
+    </div>
+
+    <!-- Upload progress -->
+    <div id="uploadProgress" class="upload-progress"></div>
+
+    <!-- Preview grid -->
+    <div id="previewGrid" class="preview-grid" style="display:none"></div>
+
+    <button class="submit-btn" onclick="goStep(2)" id="step1Next" style="margin-top:8px">
+      Endelea — Maelezo →
+    </button>
+  </div>
+
+  <!-- STEP 2: Product Details -->
+  <div id="stepContent2" style="display:none">
+    <div class="form-section">
+      <div class="section-title"><span>📝</span> Maelezo ya Bidhaa</div>
+
+      <div class="form-group">
+        <label class="form-label">Jina la Bidhaa *</label>
+        <input type="text" class="form-input" id="prodName" placeholder="Mfano: Kanzu ya Kiswahili — Rangi Nyekundu">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Aina ya Bidhaa *</label>
+        <select class="form-select" id="prodCategory">
+          <option value="">— Chagua aina —</option>
+          <option value="fashion">👗 Nguo & Mitindo</option>
+          <option value="electronics">📱 Elektroniki</option>
+          <option value="food">🍽️ Chakula & Vinywaji</option>
+          <option value="beauty">💄 Urembo & Afya ya Ngozi</option>
+          <option value="health">💊 Dawa & Afya</option>
+          <option value="home">🏠 Nyumba & Samani</option>
+          <option value="sports">⚽ Michezo & Burudani</option>
+          <option value="agriculture">🌾 Kilimo & Mazao</option>
+          <option value="art">🎨 Sanaa & Ubunifu</option>
+          <option value="jewelry">💎 Mapambo & Vito</option>
+          <option value="babies">👶 Watoto & Mama</option>
+          <option value="automotive">🚗 Magari & Vipuri</option>
+          <option value="services">🔧 Huduma</option>
+          <option value="other">📦 Nyingine</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Maelezo *</label>
+        <textarea class="form-textarea" id="prodDesc" placeholder="Elezea bidhaa yako kwa undani — vipengele, ubora, matumizi, saizi..."></textarea>
+      </div>
+
+      <!-- Variants -->
+      <div class="section-title" style="margin-top:20px"><span>🎨</span> Variants (Rangi/Saizi/Uzito)</div>
+      <div id="variantsContainer"></div>
+      <button class="add-variant-btn" onclick="addVariant()">+ Ongeza Variant (Rangi, Saizi, n.k.)</button>
+
+      <!-- Tags -->
+      <div class="form-group" style="margin-top:16px">
+        <label class="form-label">Tags za Utafutaji</label>
+        <div class="tags-wrap" id="tagsWrap"></div>
+        <div style="display:flex;gap:8px">
+          <input type="text" class="form-input" id="tagInput" placeholder="Andika tag na bonyeza Enter" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();addTag()}">
+          <button onclick="addTag()" style="padding:10px 14px;background:rgba(255,255,255,0.08);border-radius:12px;font-size:.8rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:white">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="goStep(1)" style="flex:1;padding:13px;background:rgba(255,255,255,0.08);border-radius:14px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:white">← Rudi</button>
+      <button class="submit-btn" onclick="goStep(3)" style="flex:2">Endelea — Bei →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Price & Stock -->
+  <div id="stepContent3" style="display:none">
+    <div class="form-section">
+      <div class="section-title"><span>💰</span> Bei na Stoo</div>
+
+      <div class="price-group">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Bei ya Kawaida (TZS) *</label>
+          <input type="number" class="form-input" id="prodPrice" placeholder="0" min="0" oninput="updatePricePreview()">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Bei ya Sale (TZS)</label>
+          <input type="number" class="form-input" id="prodSalePrice" placeholder="Acha wazi kama hakuna" min="0" oninput="updatePricePreview()">
+          <div class="price-hint" id="discountHint"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Stoo (Idadi)</label>
+          <input type="number" class="form-input" id="prodStock" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kiwango cha Chini</label>
+          <input type="number" class="form-input" id="prodLowStock" placeholder="5" min="0" value="5">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Uzito wa Ufungashaji (kg)</label>
+        <input type="number" class="form-input" id="prodWeight" placeholder="0.5" min="0" step="0.1">
+      </div>
+
+      <!-- Settings toggles -->
+      <div class="section-title" style="margin-top:20px"><span>⚙️</span> Mipangilio</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Iangazie (Featured)</div>
+          <div class="toggle-desc">Ionyeshe kwenye sehemu maalum</div>
+        </div>
+        <div class="toggle" id="toggleFeatured" onclick="toggle('Featured')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Iko Sale</div>
+          <div class="toggle-desc">Onyesha badge ya SALE kwenye feed</div>
+        </div>
+        <div class="toggle" id="toggleSale" onclick="toggle('Sale')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Fuatilia Stoo</div>
+          <div class="toggle-desc">Pumzisha mauzo ukikwisha stoo</div>
+        </div>
+        <div class="toggle on" id="toggleTrack" onclick="toggle('Track')"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="goStep(2)" style="flex:1;padding:13px;background:rgba(255,255,255,0.08);border-radius:14px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:white">← Rudi</button>
+      <button class="submit-btn" onclick="goStep(4)" style="flex:2">Endelea — Pitia →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Review & Publish -->
+  <div id="stepContent4" style="display:none">
+    <div class="section-title"><span>👀</span> Pitia Kabla ya Kuchapisha</div>
+
+    <div id="reviewContent" style="background:var(--surface);border-radius:16px;padding:16px;border:1px solid var(--border);margin-bottom:20px"></div>
+
+    <div id="mainForm">
+      <div style="display:flex;gap:10px">
+        <button onclick="goStep(3)" style="flex:1;padding:13px;background:rgba(255,255,255,0.08);border-radius:14px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:white">← Hariri</button>
+        <button class="submit-btn" onclick="publishProduct()" id="publishBtn" style="flex:2">
+          🚀 Chapisha Bidhaa
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="successScreen">
+    <div class="s-emoji">🎉</div>
+    <div class="s-title">Bidhaa Imechapishwa!</div>
+    <div class="s-sub">Bidhaa yako inaonekana sasa kwenye feed ya OST</div>
+    <div class="s-btns">
+      <button class="s-btn-primary" onclick="location.href='../index.html'">📱 Ona kwenye Feed</button>
+      <button class="s-btn-outline" onclick="location.reload()">+ Weka Bidhaa Nyingine</button>
+      <button class="s-btn-outline" onclick="location.href='products.html'">📦 Bidhaa Zangu Zote</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+const API = 'https://ost-tz.onrender.com/api';
+const CLOUDINARY_CLOUD = 'weka_cloud_name_yako'; // Badilisha na cloud name yako
+const CLOUDINARY_PRESET = 'ost_upload'; // Unsigned upload preset
+const token = localStorage.getItem('ost_token');
+const user = JSON.parse(localStorage.getItem('ost_user') || 'null');
+
+if (!token || !user || (user.role !== 'merchant' && user.role !== 'admin')) {
+  location.href = '../index.html';
+}
+
+let currentStep = 1;
+let uploadedMedia = [];
+let tags = [];
+let variants = [];
+let variantCount = 0;
+let toggleStates = { Featured: false, Sale: false, Track: true };
+let storeId = null;
+
+// Get store ID
+async function init() {
+  try {
+    const data = await fetch(`${API}/stores/owner/my-store`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(r => r.json());
+    if (data.success) storeId = data.store._id;
+  } catch(e) {}
+}
+
+// ── Step Navigation ────────────────────────────────────
+function goStep(step) {
+  // Validate
+  if (step === 2 && uploadedMedia.length === 0) {
+    toast('⚠️ Pakia picha angalau moja kwanza', 'e');
+    return;
+  }
+  if (step === 3) {
+    if (!document.getElementById('prodName').value.trim()) { toast('⚠️ Weka jina la bidhaa', 'e'); return; }
+    if (!document.getElementById('prodCategory').value) { toast('⚠️ Chagua aina ya bidhaa', 'e'); return; }
+  }
+  if (step === 4) {
+    if (!document.getElementById('prodPrice').value) { toast('⚠️ Weka bei ya bidhaa', 'e'); return; }
+    renderReview();
+  }
+
+  // Update steps UI
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`step${i}`);
+    el.classList.remove('active', 'done');
+    if (i < step) el.classList.add('done');
+    else if (i === step) el.classList.add('active');
+    document.getElementById(`stepContent${i}`).style.display = i === step ? 'block' : 'none';
+    if (i === step && el.querySelector('.step-num')) {
+      el.querySelector('.step-num').textContent = i < step ? '✓' : i;
+    }
+  }
+  currentStep = step;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── File Upload ────────────────────────────────────────
+async function handleFiles(files) {
+  if (!files.length) return;
+  const fileArr = Array.from(files);
+  document.getElementById('previewGrid').style.display = 'grid';
+
+  for (const file of fileArr) {
+    const id = Date.now() + Math.random();
+    const isVideo = file.type.startsWith('video/');
+    const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+
+    // Add to progress
+    const progItem = document.createElement('div');
+    progItem.className = 'up-item';
+    progItem.id = `prog-${id}`;
+    progItem.innerHTML = `
+      <div class="up-thumb" id="thumb-${id}" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem">${isVideo ? '🎥' : '🖼️'}</div>
+      <div class="up-info">
+        <div class="up-name">${file.name}</div>
+        <div class="up-size">${sizeMB} MB</div>
+        <div class="up-bar-wrap"><div class="up-bar" id="bar-${id}" style="width:0%"></div></div>
+      </div>
+      <div class="up-status uploading" id="status-${id}">Inapakia...</div>`;
+    document.getElementById('uploadProgress').appendChild(progItem);
+
+    // Show local preview
+    const reader = new FileReader();
+    reader.onload = e => {
+      const thumb = document.getElementById(`thumb-${id}`);
+      if (isVideo) {
+        thumb.innerHTML = `<video src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:8px"></video>`;
+      } else {
+        thumb.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
+      }
+    };
+    reader.readAsDataURL(file);
+
+    // Animate progress bar
+    let prog = 0;
+    const interval = setInterval(() => {
+      prog = Math.min(prog + Math.random() * 15, 85);
+      const bar = document.getElementById(`bar-${id}`);
+      if (bar) bar.style.width = prog + '%';
+    }, 200);
+
+    try {
+      // Upload to Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_PRESET);
+      formData.append('folder', 'ost-v2/products');
+
+      const endpoint = isVideo
+        ? `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`
+        : `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`;
+
+      const res = await fetch(endpoint, { method: 'POST', body: formData });
+      const data = await res.json();
+
+      clearInterval(interval);
+
+      if (data.secure_url) {
+        // Success
+        const bar = document.getElementById(`bar-${id}`);
+        const status = document.getElementById(`status-${id}`);
+        if (bar) bar.style.width = '100%';
+        if (status) { status.textContent = '✓ Imepakiwa'; status.className = 'up-status done'; }
+
+        const mediaObj = {
+          url: data.secure_url,
+          publicId: data.public_id,
+          type: isVideo ? 'video' : 'image',
+          isPrimary: uploadedMedia.length === 0
+        };
+        uploadedMedia.push(mediaObj);
+        renderPreviewGrid();
+        toast(`✅ ${file.name} imepakiwa!`, 's');
+      } else {
+        throw new Error(data.error?.message || 'Upload imeshindwa');
+      }
+    } catch (err) {
+      clearInterval(interval);
+      const status = document.getElementById(`status-${id}`);
+      const bar = document.getElementById(`bar-${id}`);
+      if (status) { status.textContent = '✗ Imeshindwa'; status.className = 'up-status error'; }
+      if (bar) { bar.style.width = '100%'; bar.style.background = 'var(--danger)'; }
+
+      // Fallback: use local preview URL for demo
+      const localUrl = await readFileAsDataURL(file);
+      const mediaObj = {
+        url: localUrl,
+        publicId: null,
+        type: isVideo ? 'video' : 'image',
+        isPrimary: uploadedMedia.length === 0,
+        isLocal: true
+      };
+      uploadedMedia.push(mediaObj);
+      renderPreviewGrid();
+      toast(`⚠️ Cloudinary preset haijawekwa — picha imehifadhiwa locally`, 'i');
+    }
+  }
+}
+
+function readFileAsDataURL(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPreviewGrid() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = uploadedMedia.map((m, i) => `
+    <div class="preview-item">
+      ${m.type === 'video'
+        ? `<video src="${m.url}" style="width:100%;height:100%;object-fit:cover"></video>`
+        : `<img src="${m.url}" alt="">`}
+      ${m.isPrimary ? '<div class="preview-primary">★ Kuu</div>' : ''}
+      <button class="preview-remove" onclick="removeMedia(${i})">✕</button>
+    </div>`).join('') + `
+    <label class="preview-item" style="cursor:pointer">
+      <input type="file" accept="image/*,video/*" multiple onchange="handleFiles(this.files)" style="display:none">
+      <div class="preview-add" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;height:100%">
+        <span style="font-size:1.3rem">+</span>
+        <span style="font-size:.62rem;color:rgba(255,255,255,0.3);font-weight:600">Ongeza</span>
+      </div>
+    </label>`;
+}
+
+function removeMedia(idx) {
+  uploadedMedia.splice(idx, 1);
+  if (uploadedMedia.length > 0 && !uploadedMedia.find(m => m.isPrimary)) {
+    uploadedMedia[0].isPrimary = true;
+  }
+  renderPreviewGrid();
+  if (uploadedMedia.length === 0) document.getElementById('previewGrid').style.display = 'none';
+}
+
+// ── Variants ───────────────────────────────────────────
+function addVariant(existing = null) {
+  const id = variantCount++;
+  const div = document.createElement('div');
+  div.className = 'variant-card';
+  div.id = `vc-${id}`;
+  div.innerHTML = `
+    <div class="variant-header">
+      <input type="text" class="variant-name-input" id="vn-${id}" placeholder="Jina (mfano: Rangi, Saizi, Uzito)" value="${existing?.name || ''}">
+      <button class="del-btn" onclick="document.getElementById('vc-${id}').remove()">✕</button>
+    </div>
+    <div class="variant-chips" id="vo-${id}">
+      ${(existing?.options || []).map(o => `<span class="v-chip">${o.label}<span class="remove" onclick="this.closest('.v-chip').remove()">✕</span></span>`).join('')}
+    </div>
+    <div class="add-option-row">
+      <input type="text" class="add-option-input" id="voi-${id}" placeholder="Chaguo (mfano: Nyekundu)" onkeydown="if(event.key==='Enter'){event.preventDefault();addVariantOption(${id})}">
+      <button class="add-opt-btn" onclick="addVariantOption(${id})">+ Ongeza</button>
+    </div>`;
+  document.getElementById('variantsContainer').appendChild(div);
+}
+
+function addVariantOption(id) {
+  const input = document.getElementById(`voi-${id}`);
+  const val = input.value.trim();
+  if (!val) return;
+  const chip = document.createElement('span');
+  chip.className = 'v-chip';
+  chip.innerHTML = `${val}<span class="remove" onclick="this.closest('.v-chip').remove()">✕</span>`;
+  document.getElementById(`vo-${id}`).appendChild(chip);
+  input.value = '';
+  input.focus();
+}
+
+function getVariants() {
+  const variants = [];
+  document.querySelectorAll('[id^="vc-"]').forEach(card => {
+    const id = card.id.split('-')[1];
+    const name = document.getElementById(`vn-${id}`)?.value.trim();
+    const options = [...card.querySelectorAll('.v-chip')].map(c => ({
+      label: c.textContent.replace('✕', '').trim(),
+      stock: 0
+    }));
+    if (name && options.length) variants.push({ name, options });
+  });
+  return variants;
+}
+
+// ── Tags ───────────────────────────────────────────────
+function addTag() {
+  const input = document.getElementById('tagInput');
+  const val = input.value.trim().toLowerCase().replace(/\s+/g, '-');
+  if (!val || tags.includes(val)) return;
+  tags.push(val);
+  renderTags();
+  input.value = '';
+}
+
+function removeTag(tag) {
+  tags = tags.filter(t => t !== tag);
+  renderTags();
+}
+
+function renderTags() {
+  document.getElementById('tagsWrap').innerHTML = tags.map(t =>
+    `<span class="tag-chip">#${t}<span class="remove" onclick="removeTag('${t}')">✕</span></span>`
+  ).join('');
+}
+
+// ── Toggle ─────────────────────────────────────────────
+function toggle(name) {
+  toggleStates[name] = !toggleStates[name];
+  document.getElementById(`toggle${name}`).classList.toggle('on', toggleStates[name]);
+}
+
+// ── Price preview ──────────────────────────────────────
+function updatePricePreview() {
+  const orig = parseFloat(document.getElementById('prodPrice').value) || 0;
+  const sale = parseFloat(document.getElementById('prodSalePrice').value) || 0;
+  const hint = document.getElementById('discountHint');
+
+  if (sale > 0 && sale < orig) {
+    const disc = Math.round((1 - sale / orig) * 100);
+    hint.textContent = `✅ Punguzo la ${disc}%`;
+    hint.style.color = 'var(--success)';
+  } else if (sale > 0 && sale >= orig) {
+    hint.textContent = '⚠️ Bei ya sale lazima iwe chini ya bei ya kawaida';
+    hint.style.color = 'var(--danger)';
+  } else {
+    hint.textContent = '';
+  }
+}
+
+// ── Review ─────────────────────────────────────────────
+function renderReview() {
+  const name = document.getElementById('prodName').value;
+  const cat = document.getElementById('prodCategory').value;
+  const desc = document.getElementById('prodDesc').value;
+  const price = document.getElementById('prodPrice').value;
+  const salePrice = document.getElementById('prodSalePrice').value;
+  const stock = document.getElementById('prodStock').value;
+  const fmt = n => new Intl.NumberFormat('sw-TZ', { style: 'currency', currency: 'TZS', minimumFractionDigits: 0 }).format(n);
+
+  document.getElementById('reviewContent').innerHTML = `
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      ${uploadedMedia[0] ? `
+        <div style="width:80px;height:80px;border-radius:10px;overflow:hidden;flex-shrink:0">
+          ${uploadedMedia[0].type === 'video'
+            ? `<video src="${uploadedMedia[0].url}" style="width:100%;height:100%;object-fit:cover"></video>`
+            : `<img src="${uploadedMedia[0].url}" style="width:100%;height:100%;object-fit:cover">`}
+        </div>` : ''}
+      <div>
+        <div style="font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:4px">${name}</div>
+        <div style="font-size:.78rem;color:rgba(255,255,255,0.5);margin-bottom:4px">${cat}</div>
+        <div style="font-size:.88rem;font-weight:700;color:var(--accent2)">${fmt(price)}${salePrice ? ` <span style="text-decoration:line-through;color:rgba(255,255,255,.4);font-size:.75rem">${fmt(salePrice)}</span>` : ''}</div>
+      </div>
+    </div>
+    <div style="font-size:.8rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:10px">${desc || '—'}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:.75rem">
+      <span style="color:rgba(255,255,255,0.4)">📸 ${uploadedMedia.length} picha/video</span>
+      <span style="color:rgba(255,255,255,0.4)">📦 Stoo: ${stock || 0}</span>
+      <span style="color:rgba(255,255,255,0.4)">🏷️ ${tags.length} tags</span>
+      ${toggleStates.Featured ? '<span style="color:var(--accent2)">⭐ Featured</span>' : ''}
+      ${toggleStates.Sale ? '<span style="color:var(--danger)">🔥 Sale</span>' : ''}
+    </div>`;
+}
+
+// ── Publish ────────────────────────────────────────────
+async function publishProduct() {
+  if (!storeId) { toast('⚠️ Biashara haijapatikana. Unda kwanza.', 'e'); return; }
+
+  const name = document.getElementById('prodName').value.trim();
+  const price = parseFloat(document.getElementById('prodPrice').value);
+  const salePrice = parseFloat(document.getElementById('prodSalePrice').value) || null;
+  const category = document.getElementById('prodCategory').value;
+
+  if (!name || !price || !category) { toast('⚠️ Jaza sehemu zote zinazohitajika', 'e'); return; }
+  if (salePrice && salePrice >= price) { toast('⚠️ Bei ya sale lazima iwe chini ya bei ya kawaida', 'e'); return; }
+
+  const btn = document.getElementById('publishBtn');
+  btn.textContent = '🚀 Inachapisha...';
+  btn.disabled = true;
+
+  try {
+    const payload = {
+      name,
+      category,
+      description: document.getElementById('prodDesc').value,
+      price: {
+        original: price,
+        discounted: salePrice && salePrice < price ? salePrice : null
+      },
+      stock: {
+        quantity: parseInt(document.getElementById('prodStock').value) || 0,
+        trackStock: toggleStates.Track,
+        lowStockThreshold: parseInt(document.getElementById('prodLowStock').value) || 5
+      },
+      shipping: {
+        weight: parseFloat(document.getElementById('prodWeight').value) || null
+      },
+      media: uploadedMedia.map(m => ({
+        url: m.url,
+        publicId: m.publicId,
+        type: m.type,
+        isPrimary: m.isPrimary
+      })),
+      variants: getVariants(),
+      tags,
+      isFeatured: toggleStates.Featured,
+      isOnSale: toggleStates.Sale
+    };
+
+    const res = await fetch(`${API}/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('mainForm').style.display = 'none';
+      document.getElementById('reviewContent').style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+    } else {
+      toast(data.message || 'Hitilafu ya kuchapisha', 'e');
+    }
+  } catch(e) {
+    toast('Hitilafu ya mtandao', 'e');
+  } finally {
+    btn.textContent = '🚀 Chapisha Bidhaa';
+    btn.disabled = false;
+  }
+}
+
+// ── Toast ──────────────────────────────────────────────
+function toast(msg, type = 'i') {
+  const el = document.createElement('div');
+  el.className = `toast-item ${type === 's' ? 't-s' : type === 'e' ? 't-e' : 't-i'}`;
+  el.textContent = msg;
+  document.getElementById('toastStack').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// Drag and drop
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+
+init();
+</script>
+</body>
+</html>

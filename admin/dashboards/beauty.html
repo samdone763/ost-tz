@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty Dashboard — OST</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#FDF8F8;--surface:#fff;--border:#F0E0E0;
+  --ink:#1A0A0A;--ink2:#5A3A3A;--ink3:#B08080;
+  --rose:#D4456C;--rose-soft:#FDE8EE;--rose2:#FF7096;
+  --gold:#C9A84C;--gold-soft:#FDF8ED;
+  --purple:#7C3AED;--purple-soft:#F3F0FF;
+  --success:#059669;--success-soft:#D1FAE5;
+  --font-d:'Playfair Display',Georgia,serif;
+  --font-b:'Jost',system-ui,sans-serif;
+  --sw:230px;--r:14px
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-b);background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+/* Sidebar */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:linear-gradient(180deg,#1A0A0A 0%,#2D0A1A 100%);display:flex;flex-direction:column;z-index:100}
+.s-logo{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.s-brand{font-family:var(--font-d);font-size:1.2rem;font-weight:600;color:#fff;letter-spacing:.05em}
+.s-brand span{color:var(--rose2)}
+.s-sub{font-size:.6rem;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+.nav-grp{padding:14px 14px 5px;font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 8px;border-radius:10px;color:rgba(255,255,255,.45);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+.nav-item.active{background:var(--rose);color:#fff}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.s-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.07)}
+.s-user{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,.05);border-radius:10px}
+.s-av{width:32px;height:32px;border-radius:8px;background:var(--rose);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.82rem}
+.s-nm{font-size:.78rem;font-weight:600;color:#fff}
+.s-rl{font-size:.66rem;color:rgba(255,255,255,.3)}
+/* Main */
+.main{margin-left:var(--sw);min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 26px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-family:var(--font-d);font-size:1.1rem;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.tb-r{display:flex;align-items:center;gap:10px}
+.btn-new{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--rose);color:#fff;border:none;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:var(--font-b);transition:all .15s}
+.btn-new:hover{background:var(--rose2)}
+/* Content */
+.content{padding:22px 26px}
+/* Beauty metrics - card style */
+.beauty-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.bm-card{background:var(--surface);border-radius:var(--r);padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;animation:fu .4s ease both;transition:all .2s}
+.bm-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,69,108,.08)}
+.bm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.bm-card:nth-child(1)::before{background:linear-gradient(90deg,var(--rose),var(--rose2))}
+.bm-card:nth-child(2)::before{background:linear-gradient(90deg,var(--gold),#E8C85A)}
+.bm-card:nth-child(3)::before{background:linear-gradient(90deg,var(--purple),#9F67FF)}
+.bm-card:nth-child(4)::before{background:linear-gradient(90deg,var(--success),#10B981)}
+.bm-card:nth-child(1){animation-delay:.05s}
+.bm-card:nth-child(2){animation-delay:.1s}
+.bm-card:nth-child(3){animation-delay:.15s}
+.bm-card:nth-child(4){animation-delay:.2s}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.bm-emoji{font-size:1.4rem;margin-bottom:10px}
+.bm-val{font-family:var(--font-d);font-size:1.6rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:3px;letter-spacing:-.01em}
+.bm-lbl{font-size:.73rem;color:var(--ink3);font-weight:500}
+.bm-trend{font-size:.72rem;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
+.t-up{color:var(--success)}
+.t-down{color:var(--rose)}
+/* Middle section */
+.mid-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:18px}
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;animation:fu .4s ease .2s both}
+.card-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--font-d);font-size:.95rem;font-weight:600;color:var(--ink)}
+.card-sub{font-size:.72rem;color:var(--ink3);margin-top:2px}
+.card-body{padding:16px 18px}
+.chart-wrap{height:195px;position:relative}
+/* Skin type breakdown */
+.skin-grid{display:flex;flex-direction:column;gap:8px}
+.skin-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg);border-radius:8px}
+.skin-left{display:flex;align-items:center;gap:8px}
+.skin-dot{width:10px;height:10px;border-radius:50%}
+.skin-name{font-size:.8rem;font-weight:600;color:var(--ink2)}
+.skin-cnt{font-size:.75rem;font-weight:700;color:var(--ink)}
+.skin-pct{font-size:.7rem;color:var(--ink3)}
+/* Top products beauty style */
+.beauty-prods{display:flex;flex-direction:column;gap:0}
+.bp-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.bp-row:last-child{border-bottom:none}
+.bp-img{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--bg);flex-shrink:0}
+.bp-info{flex:1;min-width:0}
+.bp-name{font-size:.82rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bp-type{font-size:.7rem;color:var(--ink3)}
+.bp-rating{display:flex;align-items:center;gap:3px;font-size:.72rem;font-weight:600;color:var(--gold)}
+.bp-price{font-family:var(--font-d);font-size:.88rem;font-weight:700;color:var(--ink);white-space:nowrap}
+/* Ingredient highlight */
+.ingredient-tags{display:flex;flex-wrap:wrap;gap:6px}
+.ing-tag{padding:4px 10px;background:var(--rose-soft);color:var(--rose);border-radius:20px;font-size:.72rem;font-weight:600}
+/* Bot row */
+.bot-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* Before/after section */
+.ba-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ba-item{aspect-ratio:1;border-radius:8px;background:var(--bg);border:1px solid var(--border);overflow:hidden;position:relative;cursor:pointer}
+.ba-item img{width:100%;height:100%;object-fit:cover}
+.ba-label{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.5);color:white;font-size:.58rem;padding:2px 6px;border-radius:4px;font-weight:600}
+/* Orders */
+.order-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.order-item:last-child{border-bottom:none}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:.68rem;font-weight:600}
+.b-rose{background:var(--rose-soft);color:var(--rose)}
+.b-success{background:var(--success-soft);color:var(--success)}
+.b-gold{background:var(--gold-soft);color:var(--gold)}
+.b-gray{background:var(--bg);color:var(--ink3)}
+/* Skeleton */
+.sk{background:linear-gradient(90deg,#fdf0f0 25%,#f5e0e0 50%,#fdf0f0 75%);background-size:200% 100%;animation:sk 1.5s infinite;border-radius:8px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.mob-tog{display:none;position:fixed;top:12px;left:12px;z-index:200;width:36px;height:36px;background:var(--rose);border-radius:10px;border:none;cursor:pointer;align-items:center;justify-content:center;color:#fff}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+@media(max-width:1100px){.beauty-metrics{grid-template-columns:repeat(2,1fr)}.mid-grid{grid-template-columns:1fr}.bot-row{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.ov.open{display:block}.mob-tog{display:flex}.main{margin-left:0}.topbar{padding:0 14px 0 56px}.content{padding:14px}}
+</style>
+</head>
+<body>
+
+<button class="mob-tog" onclick="toggleSidebar()">
+  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="ov" id="ov" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo"><div class="s-brand">OST <span>Beauty</span></div><div class="s-sub">Beauty Dashboard</div></div>
+  <div class="nav-grp">Overview</div>
+  <a href="index.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  <a href="../orders.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Orders</a>
+  <div class="nav-grp">Products</div>
+  <a href="../products.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>All Products</a>
+  <a href="#" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Before & After</a>
+  <div class="s-bottom">
+    <div class="s-user"><div class="s-av" id="sAv">S</div><div><div class="s-nm" id="sNm">Muuzaji</div><div class="s-rl">Beauty Merchant</div></div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">💄 Beauty & Skincare</div>
+    <div class="tb-r">
+      <button class="btn-new" onclick="location.href='../products.html?new=1'">+ Add Product</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="beauty-metrics" id="beautyMetrics">
+      <div class="bm-card"><div class="sk" style="height:28px;width:28px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+      <div class="bm-card"><div class="sk" style="height:28px;width:28px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+      <div class="bm-card"><div class="sk" style="height:28px;width:28px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+      <div class="bm-card"><div class="sk" style="height:28px;width:28px;border-radius:8px;margin-bottom:10px"></div><div class="sk" style="height:26px;width:65%;margin-bottom:4px"></div><div class="sk" style="height:12px;width:50%"></div></div>
+    </div>
+
+    <div class="mid-grid">
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Sales Trend</div><div class="card-sub">Revenue over time</div></div></div>
+        <div class="card-body"><div class="chart-wrap"><canvas id="salesChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">🧴 Product Categories</div></div>
+        <div class="card-body">
+          <div class="skin-grid">
+            <div class="skin-row"><div class="skin-left"><div class="skin-dot" style="background:var(--rose)"></div><span class="skin-name">Skincare</span></div><div><span class="skin-cnt">42%</span><span class="skin-pct"> ya mauzo</span></div></div>
+            <div class="skin-row"><div class="skin-left"><div class="skin-dot" style="background:var(--gold)"></div><span class="skin-name">Makeup</span></div><div><span class="skin-cnt">28%</span><span class="skin-pct"> ya mauzo</span></div></div>
+            <div class="skin-row"><div class="skin-left"><div class="skin-dot" style="background:var(--purple)"></div><span class="skin-name">Hair Care</span></div><div><span class="skin-cnt">18%</span><span class="skin-pct"> ya mauzo</span></div></div>
+            <div class="skin-row"><div class="skin-left"><div class="skin-dot" style="background:var(--success)"></div><span class="skin-name">Fragrance</span></div><div><span class="skin-cnt">12%</span><span class="skin-pct"> ya mauzo</span></div></div>
+          </div>
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="font-size:.75rem;font-weight:600;color:var(--ink3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Key Ingredients Trending</div>
+            <div class="ingredient-tags">
+              <span class="ing-tag">Vitamin C</span><span class="ing-tag">Retinol</span>
+              <span class="ing-tag">Niacinamide</span><span class="ing-tag">Hyaluronic</span>
+              <span class="ing-tag">Aloe Vera</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bot-row">
+      <div class="card">
+        <div class="card-head"><div class="card-title">💅 Top Products</div><a href="../products.html" style="font-size:.75rem;color:var(--rose);font-weight:600">See All →</a></div>
+        <div class="card-body" style="padding:0 18px">
+          <div class="beauty-prods" id="beautyProds"><div style="text-align:center;padding:20px;color:var(--ink3);font-size:.82rem">Loading...</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Recent Orders</div><a href="../orders.html" style="font-size:.75rem;color:var(--rose);font-weight:600">All →</a></div>
+        <div class="card-body" style="padding:0 18px">
+          <div id="recentOrds"><div style="text-align:center;padding:20px;color:var(--ink3);font-size:.82rem">Loading...</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='https://ost-tz.onrender.com/api';
+const token=localStorage.getItem('ost_token');
+const user=JSON.parse(localStorage.getItem('ost_user')||'null');
+if(!token||!user||(user.role!=='merchant'&&user.role!=='admin'))location.href='../../index.html';
+document.getElementById('sNm').textContent=user?.name?.split(' ')[0]||'Muuzaji';
+document.getElementById('sAv').textContent=(user?.name||'M')[0].toUpperCase();
+
+let storeId=null,chart=null;
+const fmt=n=>new Intl.NumberFormat('sw-TZ',{style:'currency',currency:'TZS',minimumFractionDigits:0}).format(n||0);
+const fmtDate=d=>new Date(d).toLocaleDateString('sw-TZ',{day:'numeric',month:'short'});
+
+async function api(ep){const r=await fetch(API+ep,{headers:{Authorization:`Bearer ${token}`}});return r.json();}
+
+async function load(){
+  try{
+    const sd=await api('/stores/owner/my-store');
+    if(!sd.success)return;
+    storeId=sd.store._id;
+    const[an,pr,or]=await Promise.all([api(`/analytics/${storeId}/overview?period=30`),api(`/products?store=${storeId}&sort=popular&limit=5`),api(`/orders/store/${storeId}?limit=6`)]);
+
+    if(an.success){
+      const ov=an.overview;
+      document.getElementById('beautyMetrics').innerHTML=`
+        <div class="bm-card"><div class="bm-emoji">💰</div><div class="bm-val">${fmt(ov.totalRevenue)}</div><div class="bm-lbl">Mapato ya Mwezi</div><div class="bm-trend t-up">↑ Inaongezeka</div></div>
+        <div class="bm-card"><div class="bm-emoji">🛍️</div><div class="bm-val">${ov.totalOrders}</div><div class="bm-lbl">Oda Zote</div><div class="bm-trend t-up">${ov.completedOrders} zilizofika</div></div>
+        <div class="bm-card"><div class="bm-emoji">⭐</div><div class="bm-val">${ov.totalOrders>0?Math.round(ov.completedOrders/ov.totalOrders*100)+'%':'—'}</div><div class="bm-lbl">Customer Satisfaction</div><div class="bm-trend t-up">Completion rate</div></div>
+        <div class="bm-card"><div class="bm-emoji">📦</div><div class="bm-val">${ov.cancelledOrders||0}</div><div class="bm-lbl">Returns/Cancelled</div><div class="bm-trend ${ov.cancelledOrders>0?'t-down':'t-up'}">${ov.cancelledOrders>0?'Angalia':'Vizuri sana!'}</div></div>`;
+
+      const days=an.salesByDay||[];
+      const ctx=document.getElementById('salesChart').getContext('2d');
+      if(chart)chart.destroy();
+      chart=new Chart(ctx,{type:'line',data:{labels:days.map(d=>fmtDate(d.date)),datasets:[{label:'Revenue',data:days.map(d=>d.revenue||0),borderColor:'#D4456C',backgroundColor:'rgba(212,69,108,.08)',borderWidth:2.5,fill:true,tension:.5,pointRadius:2,pointBackgroundColor:'#D4456C'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#B08080'}},y:{grid:{color:'#F9F0F0'},ticks:{font:{size:10},color:'#B08080',callback:v=>'TZS '+v.toLocaleString()}}}}});
+    }
+
+    if(pr.success){
+      document.getElementById('beautyProds').innerHTML=(pr.products||[]).map(p=>`
+        <div class="bp-row">
+          <img class="bp-img" src="${p.media?.[0]?.url||''}" onerror="this.style.background='var(--bg)'" alt="">
+          <div class="bp-info"><div class="bp-name">${p.name}</div><div class="bp-type">${p.stats?.purchases||0} sales</div><div class="bp-rating">★★★★★ 4.8</div></div>
+          <div class="bp-price">${fmt(p.price?.original)}</div>
+        </div>`).join('') || '<div style="text-align:center;padding:20px;color:var(--ink3);font-size:.82rem">No products yet</div>';
+    }
+
+    if(or.success){
+      const ords=or.orders||[];
+      const statusMap={pending:['b-gold','Inasubiri'],confirmed:['b-success','Imekubaliwa'],delivered:['b-success','Imefikishwa'],cancelled:['b-rose','Imefutwa']};
+      document.getElementById('recentOrds').innerHTML=ords.map(o=>{const[c,l]=statusMap[o.status]||['b-gray',o.status];return`<div class="order-item"><div><div style="font-size:.8rem;font-weight:700">#${o.orderNumber}</div><div style="font-size:.72rem;color:var(--ink3)">${o.customerInfo?.name||'Guest'}</div></div><div style="text-align:right"><div style="font-size:.8rem;font-weight:700">${fmt(o.pricing?.total)}</div><span class="badge ${c}">${l}</span></div></div>`;}).join('') || '<div style="text-align:center;padding:20px;color:var(--ink3);font-size:.82rem">No orders yet</div>';
+    }
+  }catch(e){}
+}
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ov').classList.toggle('open');}
+load();
+</script>
+</body>
+</html>
