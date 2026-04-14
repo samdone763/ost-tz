@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mipangilio ya Biashara — OST</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0A0A;--accent:#E8621A;--accent2:#FF8C42;--border:rgba(255,255,255,0.1);--surface:rgba(255,255,255,0.06);--white:#fff;--fd:'Syne',sans-serif;--fb:'Instrument Sans',sans-serif;--success:#00C853;--danger:#FF3B30}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--ink);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;font-family:inherit;color:inherit}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);z-index:100}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,0.5);background:none;padding:6px 10px;border-radius:8px;border:1px solid var(--border)}
+.header-title{font-family:var(--fd);font-size:1rem;font-weight:700}
+.save-btn{padding:8px 18px;background:var(--accent);color:white;border-radius:10px;font-size:.82rem;font-weight:700;font-family:var(--fd);border:none;transition:all .2s}
+.save-btn:disabled{opacity:.5;cursor:not-allowed}
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;background:rgba(10,10,10,0.95);position:sticky;top:57px;z-index:90}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 18px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--accent2);border-bottom-color:var(--accent2)}
+.content{max-width:680px;margin:0 auto;padding:20px}
+.section{margin-bottom:28px}
+.sec-title{font-family:var(--fd);font-size:.78rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:.73rem;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:.88rem;font-family:var(--fb);color:var(--white);outline:none;transition:all .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent2);background:rgba(255,255,255,0.08)}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(255,255,255,0.2)}
+.form-select{appearance:none;cursor:pointer}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-hint{font-size:.72rem;color:rgba(255,255,255,0.3);margin-top:4px}
+.toggle-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.toggle-item:last-child{border-bottom:none}
+.tl{font-size:.85rem;font-weight:600}
+.td{font-size:.72rem;color:rgba(255,255,255,0.4);margin-top:2px}
+.toggle{width:44px;height:24px;background:rgba(255,255,255,0.15);border-radius:12px;cursor:pointer;position:relative;transition:all .3s;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:all .3s}
+.toggle.on::after{left:23px}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pay-opt{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s}
+.pay-opt.active{border-color:var(--accent2);background:rgba(255,140,66,0.1)}
+.pay-opt input{width:16px;height:16px;accent-color:var(--accent2)}
+.pay-name{font-size:.82rem;font-weight:600}
+.region-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:6px}
+.region-name{flex:1;font-size:.82rem;font-weight:600}
+.region-fee-input{width:110px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;font-size:.8rem;color:white;font-family:var(--fb);outline:none;text-align:right}
+.region-del{width:28px;height:28px;background:rgba(255,59,48,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--danger);font-size:.8rem;border:none;flex-shrink:0}
+.danger-card{background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.2);border-radius:14px;padding:18px;margin-bottom:14px}
+.danger-title{font-size:.88rem;font-weight:700;color:var(--danger);margin-bottom:6px}
+.danger-desc{font-size:.78rem;color:rgba(255,255,255,0.5);margin-bottom:14px;line-height:1.6}
+.danger-btn{padding:10px 18px;background:rgba(255,59,48,0.15);color:var(--danger);border-radius:10px;font-size:.82rem;font-weight:700;font-family:var(--fb);cursor:pointer;border:1px solid rgba(255,59,48,0.3)}
+.banner-wrap{height:130px;border:2px dashed var(--border);border-radius:16px;position:relative;overflow:hidden;cursor:pointer;margin-bottom:16px;background:rgba(255,255,255,0.03)}
+.banner-wrap:hover{border-color:var(--accent2)}
+.banner-wrap input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.banner-wrap img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.banner-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1}
+.banner-lbl span{background:rgba(0,0,0,0.5);padding:6px 14px;border-radius:20px;font-size:.75rem;font-weight:600;backdrop-filter:blur(4px)}
+.logo-wrap{width:72px;height:72px;border-radius:14px;border:2px dashed var(--border);position:relative;overflow:hidden;cursor:pointer;background:rgba(255,255,255,0.04);margin-bottom:16px}
+.logo-wrap input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.logo-wrap img{width:100%;height:100%;object-fit:cover}
+.logo-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;z-index:1}
+.sk{background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.1) 50%,rgba(255,255,255,.05) 75%);background-size:200% 100%;animation:sk 1.5s infinite;border-radius:8px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.toast-stack{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:8px;width:calc(100% - 32px);max-width:360px;pointer-events:none}
+.toast-item{padding:10px 14px;border-radius:11px;font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:7px;animation:ti .3s ease}
+@keyframes ti{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.t-s{background:rgba(0,200,83,.18);border:1px solid rgba(0,200,83,.28);color:#00E676}
+.t-e{background:rgba(255,59,48,.18);border:1px solid rgba(255,59,48,.28);color:#FF6B6B}
+.t-i{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:white}
+@media(max-width:480px){.form-row{grid-template-columns:1fr}.pay-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Rudi
+  </button>
+  <div class="header-title">⚙️ Mipangilio ya Biashara</div>
+  <button class="save-btn" onclick="saveAll()" id="saveBtn">Hifadhi</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="setTab(0,this)">🏪 Biashara</div>
+  <div class="tab" onclick="setTab(1,this)">📞 Mawasiliano</div>
+  <div class="tab" onclick="setTab(2,this)">🚚 Delivery</div>
+  <div class="tab" onclick="setTab(3,this)">💳 Malipo</div>
+  <div class="tab" onclick="setTab(4,this)">⚠️ Hatari</div>
+</div>
+
+<div class="content" id="content">
+  <div class="sk" style="height:130px;border-radius:16px;margin-bottom:14px"></div>
+  <div class="sk" style="height:44px;margin-bottom:10px"></div>
+  <div class="sk" style="height:44px;margin-bottom:10px"></div>
+  <div class="sk" style="height:44px"></div>
+</div>
+
+<div class="toast-stack" id="ts"></div>
+
+<script>
+const API='https://ost-tz.onrender.com/api';
+const token=localStorage.getItem('ost_token');
+const user=JSON.parse(localStorage.getItem('ost_user')||'null');
+if(!token||!user||(user.role!=='merchant'&&user.role!=='admin'))location.href='../index.html';
+
+let store=null,currentTab=0,bannerFile=null,logoFile=null;
+let payMethods={};
+let delRegions=[];
+
+const REGIONS=['Dar es Salaam','Mwanza','Arusha','Dodoma','Mbeya','Morogoro','Tanga','Kilimanjaro','Kagera','Iringa','Mtwara','Lindi','Ruvuma','Singida','Tabora','Kigoma','Shinyanga','Geita','Simiyu','Mara','Manyara','Njombe','Songwe','Katavi','Rukwa','Pwani'];
+const CATS=[{v:'fashion',l:'Nguo & Mitindo'},{v:'electronics',l:'Elektroniki'},{v:'food',l:'Chakula & Vinywaji'},{v:'beauty',l:'Urembo & Afya'},{v:'health',l:'Dawa & Afya'},{v:'home',l:'Nyumba & Samani'},{v:'sports',l:'Michezo'},{v:'agriculture',l:'Kilimo & Mazao'},{v:'art',l:'Sanaa'},{v:'jewelry',l:'Mapambo'},{v:'babies',l:'Watoto & Mama'},{v:'automotive',l:'Magari & Vipuri'},{v:'services',l:'Huduma'},{v:'other',l:'Nyingine'}];
+
+async function apiFetch(ep,opts={}){const r=await fetch(API+ep,{headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},...opts});return r.json();}
+
+function toast(msg,type='i'){
+  const el=document.createElement('div');
+  el.className=`toast-item ${type==='s'?'t-s':type==='e'?'t-e':'t-i'}`;
+  el.textContent=msg;
+  document.getElementById('ts').appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},3000);
+}
+
+async function loadStore(){
+  try{
+    const d=await apiFetch('/stores/owner/my-store');
+    if(d.success){
+      store=d.store;
+      payMethods={...store.paymentMethods};
+      delRegions=[...(store.delivery?.regions||[])];
+    }
+  }catch(e){}
+  document.getElementById('content').innerHTML='';
+  renderTab(0);
+}
+
+function setTab(idx,btn){
+  currentTab=idx;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('content').innerHTML='';
+  renderTab(idx);
+}
+
+function renderTab(idx){
+  const c=document.getElementById('content');
+  if(idx===0)renderBasic(c);
+  else if(idx===1)renderContact(c);
+  else if(idx===2)renderDelivery(c);
+  else if(idx===3)renderPayments(c);
+  else renderDanger(c);
+}
+
+function renderBasic(c){
+  const s=store||{};
+  c.innerHTML=`
+    <div class="section">
+      <div class="sec-title">Banner na Logo</div>
+      <div class="banner-wrap" id="bannerWrap" style="${s.banner?.url?'background-image:url('+s.banner.url+');background-size:cover':''}" >
+        <input type="file" accept="image/*" onchange="prevBanner(this)">
+        <div class="banner-lbl"><span>📸 Bonyeza kubadilisha banner</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+        <div class="logo-wrap" id="logoWrap">
+          ${s.logo?.url?`<img src="${s.logo.url}" alt="">`:''}
+          <input type="file" accept="image/*" onchange="prevLogo(this)">
+          <div class="logo-lbl">${s.logo?.url?'':'🏪'}</div>
+        </div>
+        <div style="font-size:.78rem;color:rgba(255,255,255,0.4);line-height:1.6">Logo ya biashara yako<br>Saizi inayopendekezwa: 400×400px</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-title">Maelezo ya Biashara</div>
+      <div class="form-group"><label class="form-label">Jina la Biashara *</label><input type="text" class="form-input" id="sName" value="${s.name||''}" placeholder="Jina la biashara yako"></div>
+      <div class="form-group"><label class="form-label">Aina ya Biashara *</label>
+        <select class="form-select" id="sCat">
+          <option value="">— Chagua aina —</option>
+          ${CATS.map(ct=>`<option value="${ct.v}" ${s.category===ct.v?'selected':''}>${ct.l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Maelezo</label><textarea class="form-textarea" id="sDesc" placeholder="Elezea biashara yako...">${s.description||''}</textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Mkoa *</label>
+          <select class="form-select" id="sRegion">
+            <option value="">— Chagua mkoa —</option>
+            ${REGIONS.map(r=>`<option value="${r}" ${s.location?.region===r?'selected':''}>${r}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Wilaya/Mtaa</label><input type="text" class="form-input" id="sDistrict" value="${s.location?.district||''}" placeholder="Wilaya au mtaa"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Anwani Kamili</label><input type="text" class="form-input" id="sAddress" value="${s.location?.address||''}" placeholder="Mfano: Kariakoo, Biashara Street"></div>
+    </div>`;
+}
+
+function renderContact(c){
+  const ct=store?.contact||{};
+  c.innerHTML=`
+    <div class="section">
+      <div class="sec-title">Namba za Mawasiliano</div>
+      <div class="form-group"><label class="form-label">WhatsApp (255...)</label><input type="tel" class="form-input" id="ctWa" value="${ct.whatsapp||''}" placeholder="255712345678"><div class="form-hint">Wateja watawasiliana nawe moja kwa moja</div></div>
+      <div class="form-group"><label class="form-label">Simu</label><input type="tel" class="form-input" id="ctPh" value="${ct.phone||''}" placeholder="0712345678"></div>
+      <div class="form-group"><label class="form-label">Barua Pepe</label><input type="email" class="form-input" id="ctEm" value="${ct.email||''}" placeholder="biashara@gmail.com"></div>
+    </div>
+    <div class="section">
+      <div class="sec-title">Mitandao ya Kijamii</div>
+      <div class="form-group"><label class="form-label">Instagram</label><input type="text" class="form-input" id="ctIg" value="${ct.instagram||''}" placeholder="jina_lako (bila @)"></div>
+      <div class="form-group"><label class="form-label">Facebook</label><input type="text" class="form-input" id="ctFb" value="${ct.facebook||''}" placeholder="jina_lako"></div>
+    </div>`;
+}
+
+function renderDelivery(c){
+  const del=store?.delivery||{};
+  const isOn=del.available||false;
+  c.innerHTML=`
+    <div class="section">
+      <div class="sec-title">Mipangilio ya Delivery</div>
+      <div class="toggle-item">
+        <div><div class="tl">Toa Delivery</div><div class="td">Wezesha delivery kwa wateja</div></div>
+        <div class="toggle ${isOn?'on':''}" id="togDel" onclick="togDelivery()"></div>
+      </div>
+      <div id="delSettings" style="display:${isOn?'block':'none'};margin-top:14px">
+        <div class="form-group"><label class="form-label">Delivery Bure Ukizidi (TZS)</label><input type="number" class="form-input" id="freeThresh" value="${del.freeDeliveryThreshold||0}" placeholder="0 = hakuna delivery bure"></div>
+        <div class="sec-title" style="margin-top:16px">Bei za Mikoa</div>
+        <div id="regList">${delRegions.map((r,i)=>`<div class="region-item" id="reg-${i}"><span class="region-name">📍 ${r.name}</span><input class="region-fee-input" type="number" value="${r.fee}" placeholder="TZS" onchange="delRegions[${i}].fee=parseInt(this.value)||0"><button class="region-del" onclick="remRegion(${i})">✕</button></div>`).join('')}</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <select class="form-select" id="addRegSel" style="flex:1"><option value="">+ Mkoa</option>${REGIONS.filter(r=>!delRegions.find(dr=>dr.name===r)).map(r=>`<option>${r}</option>`).join('')}</select>
+          <input type="number" class="form-input" id="addRegFee" placeholder="Bei" style="width:110px">
+          <button onclick="addRegion()" style="padding:10px 14px;background:var(--accent);color:white;border-radius:12px;font-size:.8rem;font-weight:700;border:none;cursor:pointer;font-family:var(--fb);white-space:nowrap">+ Ongeza</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function togDelivery(){
+  const tog=document.getElementById('togDel');
+  const on=tog.classList.toggle('on');
+  document.getElementById('delSettings').style.display=on?'block':'none';
+}
+
+function addRegion(){
+  const sel=document.getElementById('addRegSel');
+  const fee=document.getElementById('addRegFee').value;
+  if(!sel.value||!fee){toast('⚠️ Chagua mkoa na bei','e');return;}
+  delRegions.push({name:sel.value,fee:parseInt(fee),estimatedDays:'1-3 siku'});
+  renderTab(2);
+}
+
+function remRegion(i){delRegions.splice(i,1);renderTab(2);}
+
+function renderPayments(c){
+  const pays=[{k:'mpesa',i:'📱',n:'M-Pesa',d:'Vodacom'},{k:'tigoPesa',i:'📱',n:'Tigo Pesa',d:'Tigo'},{k:'airtelMoney',i:'📱',n:'Airtel Money',d:'Airtel'},{k:'halopesa',i:'📱',n:'Halopesa',d:'TTCL'},{k:'card',i:'💳',n:'Kadi ya Benki',d:'Visa/Mastercard'},{k:'cashOnDelivery',i:'💵',n:'Lipa Ukipokea',d:'Cash on Delivery'}];
+  c.innerHTML=`
+    <div class="section">
+      <div class="sec-title">Njia za Malipo</div>
+      <div class="pay-grid">${pays.map(p=>`<div class="pay-opt ${payMethods[p.k]?'active':''}" onclick="togPay('${p.k}',this)"><input type="checkbox" ${payMethods[p.k]?'checked':''}><span class="pay-name">${p.i} ${p.n}</span></div>`).join('')}</div>
+    </div>`;
+}
+
+function togPay(k,el){payMethods[k]=!payMethods[k];el.classList.toggle('active',payMethods[k]);el.querySelector('input').checked=payMethods[k];}
+
+function renderDanger(c){
+  c.innerHTML=`
+    <div class="section">
+      <div class="sec-title">Eneo la Hatari</div>
+      <div class="danger-card">
+        <div class="danger-title">❌ Futa Biashara</div>
+        <div class="danger-desc">Hatua hii itafuta biashara yako yote pamoja na bidhaa zote. Haiwezi kutenduliwa.</div>
+        <button class="danger-btn" onclick="delStore()">Futa Biashara Yangu</button>
+      </div>
+    </div>`;
+}
+
+function prevBanner(inp){
+  if(!inp.files[0])return;
+  bannerFile=inp.files[0];
+  const reader=new FileReader();
+  reader.onload=e=>{const w=document.getElementById('bannerWrap');if(w){w.style.backgroundImage=`url(${e.target.result})`;w.style.backgroundSize='cover';w.style.backgroundPosition='center';}};
+  reader.readAsDataURL(bannerFile);
+}
+
+function prevLogo(inp){
+  if(!inp.files[0])return;
+  logoFile=inp.files[0];
+  const reader=new FileReader();
+  reader.onload=e=>{const w=document.getElementById('logoWrap');if(w)w.innerHTML=`<img src="${e.target.result}" alt="" style="width:100%;height:100%;object-fit:cover"><input type="file" accept="image/*" onchange="prevLogo(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2">`;};
+  reader.readAsDataURL(logoFile);
+}
+
+async function saveAll(){
+  const btn=document.getElementById('saveBtn');
+  btn.textContent='Inahifadhi...';btn.disabled=true;
+  try{
+    const payload={
+      name:document.getElementById('sName')?.value?.trim()||store?.name,
+      category:document.getElementById('sCat')?.value||store?.category,
+      description:document.getElementById('sDesc')?.value||store?.description,
+      location:{region:document.getElementById('sRegion')?.value||store?.location?.region,district:document.getElementById('sDistrict')?.value||store?.location?.district,address:document.getElementById('sAddress')?.value||store?.location?.address},
+      contact:{phone:document.getElementById('ctPh')?.value||store?.contact?.phone,whatsapp:document.getElementById('ctWa')?.value||store?.contact?.whatsapp,email:document.getElementById('ctEm')?.value||store?.contact?.email,instagram:document.getElementById('ctIg')?.value||store?.contact?.instagram,facebook:document.getElementById('ctFb')?.value||store?.contact?.facebook},
+      delivery:{available:document.getElementById('togDel')?.classList.contains('on')||false,freeDeliveryThreshold:parseInt(document.getElementById('freeThresh')?.value)||0,regions:delRegions},
+      paymentMethods:payMethods
+    };
+    let d;
+    if(store){d=await apiFetch(`/stores/${store._id}`,{method:'PUT',body:JSON.stringify(payload)});}
+    else{d=await apiFetch('/stores',{method:'POST',body:JSON.stringify(payload)});}
+    if(d.success){store=d.store;toast('✅ Biashara imehifadhiwa!','s');}
+    else toast(d.message||'Hitilafu','e');
+  }catch(e){toast('Hitilafu ya mtandao','e');}
+  finally{btn.textContent='Hifadhi';btn.disabled=false;}
+}
+
+async function delStore(){
+  if(!confirm('Una uhakika? Hii itafuta biashara yako yote!'))return;
+  try{
+    const tok=await apiFetch(`/stores/${store._id}/deletion-token`);
+    if(!tok.success){toast('Imeshindwa','e');return;}
+    const d=await apiFetch(`/stores/${store._id}`,{method:'DELETE',body:JSON.stringify({confirmationToken:tok.token})});
+    if(d.success){toast('Biashara imefutwa','s');setTimeout(()=>location.href='../index.html',1500);}
+    else toast(d.message,'e');
+  }catch(e){toast('Hitilafu','e');}
+}
+
+loadStore();
+</script>
+</body>
+</html>

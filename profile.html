@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akaunti Yangu — OST</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0A0A;--accent:#E8621A;--accent2:#FF8C42;--border:rgba(255,255,255,0.1);--surface:rgba(255,255,255,0.06);--white:#fff;--fd:'Syne',sans-serif;--fb:'Instrument Sans',sans-serif;--success:#00C853;--danger:#FF3B30}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--ink);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased;padding-bottom:80px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;font-family:inherit;color:inherit}
+/* Hero */
+.hero{background:linear-gradient(180deg,rgba(232,98,26,0.15) 0%,transparent 100%);padding:40px 20px 24px;text-align:center}
+.avatar{width:80px;height:80px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:1.8rem;font-weight:800;margin:0 auto 14px;border:3px solid rgba(232,98,26,0.3);overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.user-name{font-family:var(--fd);font-size:1.3rem;font-weight:800;margin-bottom:4px}
+.user-email{font-size:.8rem;color:rgba(255,255,255,0.4);margin-bottom:12px}
+.user-role{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(232,98,26,0.15);border:1px solid rgba(232,98,26,0.25);border-radius:20px;font-size:.75rem;font-weight:700;color:var(--accent2)}
+/* Stats */
+.stats-row{display:flex;gap:0;margin:20px 0 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat-item{flex:1;padding:16px 8px;text-align:center;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-val{font-family:var(--fd);font-size:1.3rem;font-weight:800;line-height:1}
+.stat-lbl{font-size:.65rem;color:rgba(255,255,255,0.4);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+/* Content */
+.content{padding:0 16px}
+/* Section */
+.sec{margin:20px 0}
+.sec-title{font-family:var(--fd);font-size:.78rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding:0 4px}
+/* Menu items */
+.menu-list{background:var(--surface);border-radius:16px;border:1px solid var(--border);overflow:hidden}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:all .2s}
+.menu-item:last-child{border-bottom:none}
+.menu-item:hover{background:rgba(255,255,255,0.04)}
+.menu-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.menu-info{flex:1}
+.menu-label{font-size:.85rem;font-weight:600}
+.menu-sub{font-size:.72rem;color:rgba(255,255,255,0.35);margin-top:1px}
+.menu-arrow{color:rgba(255,255,255,0.2);font-size:.8rem}
+.menu-badge{background:var(--accent);color:white;font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:20px;margin-left:auto}
+/* Orders list */
+.orders-list{display:flex;flex-direction:column;gap:8px}
+.order-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:14px;cursor:pointer;transition:all .2s}
+.order-card:hover{border-color:rgba(255,255,255,0.2)}
+.oc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.oc-num{font-size:.8rem;font-weight:800;color:var(--accent2)}
+.oc-date{font-size:.72rem;color:rgba(255,255,255,0.35)}
+.oc-items{font-size:.8rem;color:rgba(255,255,255,0.6);margin-bottom:8px}
+.oc-bottom{display:flex;align-items:center;justify-content:space-between}
+.oc-total{font-family:var(--fd);font-size:.95rem;font-weight:800}
+.oc-status{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:20px}
+.s-pending{background:rgba(255,149,0,0.15);color:#FF9500}
+.s-confirmed{background:rgba(0,200,83,0.1);color:#00C853}
+.s-delivered{background:rgba(0,200,83,0.15);color:#00C853}
+.s-cancelled{background:rgba(255,59,48,0.1);color:var(--danger)}
+.s-processing{background:rgba(33,150,243,0.1);color:#2196F3}
+/* Login prompt */
+.login-prompt{text-align:center;padding:50px 20px}
+.lp-icon{font-size:3.5rem;margin-bottom:16px}
+.lp-title{font-family:var(--fd);font-size:1.2rem;font-weight:800;margin-bottom:8px}
+.lp-sub{font-size:.82rem;color:rgba(255,255,255,0.4);margin-bottom:24px;line-height:1.6}
+.btn-login{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:var(--accent);color:white;border-radius:14px;font-size:.88rem;font-weight:700;font-family:var(--fd);cursor:pointer;border:none;transition:all .2s}
+.btn-login:hover{background:var(--accent2)}
+.btn-register{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--surface);color:white;border-radius:14px;font-size:.85rem;font-weight:600;cursor:pointer;border:1px solid var(--border);margin-left:10px;transition:all .2s}
+/* Logout */
+.logout-btn{width:100%;padding:14px;background:rgba(255,59,48,0.08);color:var(--danger);border-radius:14px;font-size:.88rem;font-weight:700;font-family:var(--fd);cursor:pointer;border:1px solid rgba(255,59,48,0.15);transition:all .2s;margin-top:8px}
+.logout-btn:hover{background:rgba(255,59,48,0.15)}
+/* Skeleton */
+.sk{background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.1) 50%,rgba(255,255,255,.05) 75%);background-size:200% 100%;animation:sk 1.5s infinite;border-radius:8px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Bottom nav */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-around;z-index:200}
+.bi{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 14px}
+.bi-lbl{font-size:.58rem;font-weight:600;color:rgba(255,255,255,.4);transition:color .2s}
+.bi.active .bi-lbl{color:var(--accent2)}
+.bnav-post{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:13px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div id="mainContent"></div>
+
+<!-- Bottom Nav -->
+<nav class="bnav">
+  <div class="bi" onclick="location.href='index.html'">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    <span class="bi-lbl">Nyumbani</span>
+  </div>
+  <div class="bi" onclick="location.href='explore.html'">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span class="bi-lbl">Gundua</span>
+  </div>
+  <div class="bnav-post" onclick="goPost()">
+    <svg width="20" height="20" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </div>
+  <div class="bi" onclick="location.href='track.html'">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+    <span class="bi-lbl">Oda</span>
+  </div>
+  <div class="bi active">
+    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    <span class="bi-lbl" style="color:var(--accent2)">Mimi</span>
+  </div>
+</nav>
+
+<script>
+const API='https://ost-tz.onrender.com/api';
+const token=localStorage.getItem('ost_token');
+const user=JSON.parse(localStorage.getItem('ost_user')||'null');
+const fmt=n=>new Intl.NumberFormat('sw-TZ',{style:'currency',currency:'TZS',minimumFractionDigits:0}).format(n||0);
+const fmtDate=d=>new Date(d).toLocaleDateString('sw-TZ',{day:'numeric',month:'short',year:'numeric'});
+
+function renderGuest(){
+  document.getElementById('mainContent').innerHTML=`
+    <div class="login-prompt">
+      <div class="lp-icon">👤</div>
+      <div class="lp-title">Ingia Akaunti Yako</div>
+      <div class="lp-sub">Ingia kuona oda zako, biashara yako, na mengi zaidi</div>
+      <div>
+        <button class="btn-login" onclick="location.href='index.html'">Ingia</button>
+        <button class="btn-register" onclick="location.href='index.html'">Jisajili</button>
+      </div>
+    </div>`;
+}
+
+async function renderUser(){
+  const isMerchant=user.role==='merchant'||user.role==='admin';
+  const initials=(user.name||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  // Load orders count
+  let ordersCount=0;
+  let orders=[];
+  try{
+    if(token){
+      const od=await fetch(`${API}/orders/my-orders`,{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json());
+      if(od.success){orders=od.orders||[];ordersCount=orders.length;}
+    }
+  }catch(e){}
+
+  const statusMap={pending:'s-pending|Inasubiri',confirmed:'s-confirmed|Imekubaliwa',processing:'s-processing|Inafungashwa',shipped:'s-processing|Imesafirishwa',out_for_delivery:'s-confirmed|Njiani',delivered:'s-delivered|Imefikishwa',cancelled:'s-cancelled|Imefutwa'};
+
+  document.getElementById('mainContent').innerHTML=`
+    <!-- Hero -->
+    <div class="hero">
+      <div class="avatar">
+        ${user.avatar?.url?`<img src="${user.avatar.url}" alt="">`:`<span>${initials}</span>`}
+      </div>
+      <div class="user-name">${user.name}</div>
+      <div class="user-email">${user.email}</div>
+      <div class="user-role">${isMerchant?'🏪 Muuzaji':'🛒 Mnunuzi'}</div>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-val">${ordersCount}</div><div class="stat-lbl">Oda</div></div>
+        <div class="stat-item"><div class="stat-val">${orders.filter(o=>o.status==='delivered').length}</div><div class="stat-lbl">Zilizofika</div></div>
+        <div class="stat-item"><div class="stat-val">${JSON.parse(localStorage.getItem('ost_likes')||'[]').length}</div><div class="stat-lbl">Mapendwa</div></div>
+      </div>
+    </div>
+
+    <div class="content">
+      ${isMerchant?`
+      <!-- Merchant section -->
+      <div class="sec">
+        <div class="sec-title">Biashara Yangu</div>
+        <div class="menu-list">
+          <div class="menu-item" onclick="location.href='admin/index.html'">
+            <div class="menu-icon" style="background:rgba(232,98,26,0.15)">📊</div>
+            <div class="menu-info"><div class="menu-label">Dashboard</div><div class="menu-sub">Angalia analytics na mauzo</div></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" onclick="location.href='admin/products.html'">
+            <div class="menu-icon" style="background:rgba(255,140,66,0.15)">📦</div>
+            <div class="menu-info"><div class="menu-label">Bidhaa Zangu</div><div class="menu-sub">Simamia bidhaa na stoo</div></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" onclick="location.href='admin/orders.html'">
+            <div class="menu-icon" style="background:rgba(33,150,243,0.15)">🛍️</div>
+            <div class="menu-info"><div class="menu-label">Oda za Wateja</div><div class="menu-sub">Simamia na sasisha hali</div></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" onclick="location.href='admin/upload.html'">
+            <div class="menu-icon" style="background:rgba(0,200,83,0.15)">📸</div>
+            <div class="menu-info"><div class="menu-label">Weka Bidhaa Mpya</div><div class="menu-sub">Pakia picha na video</div></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" onclick="location.href='admin/store-settings.html'">
+            <div class="menu-icon" style="background:rgba(156,39,176,0.15)">⚙️</div>
+            <div class="menu-info"><div class="menu-label">Mipangilio ya Duka</div><div class="menu-sub">Hariri maelezo ya biashara</div></div>
+            <div class="menu-arrow">›</div>
+          </div>
+        </div>
+      </div>`:''}
+
+      <!-- Orders section -->
+      <div class="sec">
+        <div class="sec-title">Oda Zangu za Hivi Karibuni</div>
+        ${orders.length?`
+        <div class="orders-list">
+          ${orders.slice(0,5).map(o=>{
+            const[sc,sl]=(statusMap[o.status]||'s-pending|'+o.status).split('|');
+            return`<div class="order-card" onclick="location.href='track.html?order=${o.orderNumber}'">
+              <div class="oc-top"><span class="oc-num">#${o.orderNumber}</span><span class="oc-date">${fmtDate(o.createdAt)}</span></div>
+              <div class="oc-items">${o.items?.length||0} bidhaa • ${o.store?.name||'Duka'}</div>
+              <div class="oc-bottom"><span class="oc-total">${fmt(o.pricing?.total)}</span><span class="oc-status ${sc}">${sl}</span></div>
+            </div>`;
+          }).join('')}
+          ${orders.length>5?`<button onclick="location.href='track.html'" style="width:100%;padding:12px;background:var(--surface);border-radius:12px;font-size:.82rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:rgba(255,255,255,0.6);margin-top:4px">Ona oda zote ${orders.length} →</button>`:''}
+        </div>`:`
+        <div class="menu-list">
+          <div style="text-align:center;padding:28px 20px;color:rgba(255,255,255,0.35)">
+            <div style="font-size:2rem;margin-bottom:10px">📦</div>
+            <div style="font-size:.82rem;font-weight:600">Bado hujafanya oda yoyote</div>
+            <button onclick="location.href='index.html'" style="margin-top:14px;padding:10px 20px;background:var(--accent);color:white;border-radius:12px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:var(--fb)">Anza Kununua</button>
+          </div>
+        </div>`}
+      </div>
+
+      <!-- Account settings -->
+      <div class="sec">
+        <div class="sec-title">Akaunti</div>
+        <div class="menu-list">
+          <div class="menu-item" onclick="editProfile()">
+            <div class="menu-icon" style="background:rgba(255,255,255,0.06)">👤</div>
+            <div class="menu-info"><div class="menu-label">Hariri Wasifu</div><div class="menu-sub">${user.name} • ${user.phone||'Simu haijaongezwa'}</div></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-item" onclick="location.href='track.html'">
+            <div class="menu-icon" style="background:rgba(255,255,255,0.06)">📍</div>
+            <div class="menu-info"><div class="menu-label">Fuatilia Oda</div><div class="menu-sub">Angalia hali ya oda yako</div></div>
+            <div class="menu-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="doLogout()">🚪 Toka Akaunti</button>
+    </div>`;
+}
+
+function doLogout(){
+  if(!confirm('Una uhakika unataka kutoka?'))return;
+  localStorage.removeItem('ost_token');
+  localStorage.removeItem('ost_user');
+  localStorage.removeItem('ost_cart');
+  location.href='index.html';
+}
+
+function editProfile(){alert('Profile editing — Inakuja hivi karibuni!');}
+function goPost(){if(!user){location.href='index.html';return;}if(user.role==='merchant')location.href='admin/products.html?new=1';else alert('Unahitaji akaunti ya muuzaji');}
+
+if(!token||!user)renderGuest();
+else renderUser();
+</script>
+</body>
+</html>
