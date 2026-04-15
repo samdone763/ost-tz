@@ -29,8 +29,8 @@ const authLimiter = rateLimit({
 
 // ─── CORS ──────────────────────────────────────────────
 app.use(cors({
-  origin: '*',
-  credentials: false,
+  origin: '*', // Badilisha hii kwa domain yako halisi katika production
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -57,6 +57,8 @@ app.use('/api/payments',     require('./routes/payments'));
 app.use('/api/search',       require('./routes/search'));
 app.use('/api/notifications',require('./routes/notifications'));
 app.use('/api/upload',       require('./routes/upload'));
+// Ongeza route mpya ya reviews hapa
+app.use('/api/reviews',      require('./routes/reviews'));
 
 // ─── Health Check ──────────────────────────────────────
 app.get('/', (req, res) => {
