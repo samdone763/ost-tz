@@ -250,3 +250,57 @@ loadStore();
 </script>
 </body>
 </html>
+<!-- Reviews & Ratings Section -->
+<div class="section" id="reviewsSection">
+  <div class="section-head">
+    <div class="section-title">⭐ Mapitio na Ukadiriaji</div>
+  </div>
+  <div id="reviewsList" style="padding:16px"></div>
+  <div style="padding:16px;border-top:1px solid var(--border)">
+    <h3 style="margin-bottom:12px;font-size:.95rem">Acha Mapitio</h3>
+    <div class="review-form">
+      <input id="reviewName" placeholder="Jina lako" style="padding:10px;border:1px solid var(--border);border-radius:8px;width:100%;margin-bottom:8px">
+      <div id="starRating" style="font-size:1.5rem;margin-bottom:8px;cursor:pointer">
+        <span onclick="setRating(1)">☆</span>
+        <span onclick="setRating(2)">☆</span>
+        <span onclick="setRating(3)">☆</span>
+        <span onclick="setRating(4)">☆</span>
+        <span onclick="setRating(5)">☆</span>
+      </div>
+      <textarea id="reviewComment" placeholder="Maoni yako..." style="padding:10px;border:1px solid var(--border);border-radius:8px;width:100%;height:80px;margin-bottom:8px"></textarea>
+      <button class="btn btn-primary" onclick="submitReview()" style="width:100%">Tuma Mapitio</button>
+    </div>
+  </div>
+</div>
+<script>
+let userRating = 0;
+function setRating(n) {
+  userRating = n;
+  document.querySelectorAll('#starRating span').forEach((s,i) => s.textContent = i < n ? '★' : '☆');
+}
+async function loadReviews() {
+  try {
+    const res = await fetch(`${API}/reviews/${storeId}`);
+    const data = await res.json();
+    if (!data.success) return;
+    document.getElementById('reviewsList').innerHTML = data.reviews.map(r => `
+      <div style="padding:12px;border-bottom:1px solid var(--border)">
+        <strong>${r.name}</strong>
+        <span style="color:#f59e0b">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+        <p style="margin:4px 0;font-size:.85rem;color:var(--t2)">${r.comment}</p>
+      </div>`).join('');
+  } catch(e) {}
+}
+async function submitReview() {
+  const name = document.getElementById('reviewName').value.trim();
+  const comment = document.getElementById('reviewComment').value.trim();
+  if (!name || !userRating) return alert('Weka jina na ukadiriaji');
+  const res = await fetch(`${API}/reviews/${storeId}`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name, rating: userRating, comment})
+  });
+  const data = await res.json();
+  if (data.success) { loadReviews(); document.getElementById('reviewName').value=''; document.getElementById('reviewComment').value=''; userRating=0; setRating(0); }
+}
+loadReviews();
+</script>
